@@ -1,0 +1,1249 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#2563eb" />
+    <meta name="codex-preview" content="development" />
+    <meta
+      name="description"
+      content="Bản đồ tra cứu nhà trọ sinh viên quanh Đại học Cần Thơ."
+    />
+    <title>Bản đồ Nhà trọ Sinh viên Cần Thơ</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+      :root {
+        --blue: #2563eb;
+        --blue-dark: #1d4ed8;
+        --ink: #0f172a;
+        --muted: #64748b;
+        --line: #e2e8f0;
+        --surface: #ffffff;
+        --danger: #dc2626;
+      }
+
+      * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: #dbeafe;
+        color: var(--ink);
+        font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      button,
+      input,
+      a {
+        font: inherit;
+      }
+
+      button,
+      a {
+        touch-action: manipulation;
+      }
+
+      .app-shell {
+        width: 100%;
+        height: 100vh;
+        height: 100svh;
+        height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        background: #f8fafc;
+      }
+
+      .map-pane {
+        position: relative;
+        flex: 0 0 44%;
+        min-height: 220px;
+        overflow: hidden;
+        background: #dbeafe;
+      }
+
+      #map {
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+      }
+
+      .list-pane {
+        position: relative;
+        z-index: 10;
+        flex: 1 1 56%;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        background: #f8fafc;
+        border-radius: 22px 22px 0 0;
+        margin-top: -18px;
+        box-shadow: 0 -10px 30px rgba(15, 23, 42, 0.12);
+      }
+
+      .list-header {
+        flex: 0 0 auto;
+        padding: 12px 14px 10px;
+        background: rgba(255, 255, 255, 0.97);
+        border-bottom: 1px solid var(--line);
+        backdrop-filter: blur(16px);
+      }
+
+      .scroll-area {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        padding: 12px 12px calc(22px + env(safe-area-inset-bottom));
+        scroll-behavior: smooth;
+      }
+
+      .scroll-area::-webkit-scrollbar {
+        width: 5px;
+      }
+
+      .scroll-area::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 999px;
+      }
+
+      .search-field:focus-within {
+        border-color: #60a5fa;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+      }
+
+      input[type="range"] {
+        width: 100%;
+        height: 22px;
+        margin: 0;
+        appearance: none;
+        background: transparent;
+        cursor: pointer;
+      }
+
+      input[type="range"]::-webkit-slider-runnable-track {
+        height: 5px;
+        border-radius: 999px;
+        background: linear-gradient(
+          to right,
+          var(--blue) 0,
+          var(--blue) var(--range-progress, 100%),
+          #dbeafe var(--range-progress, 100%),
+          #dbeafe 100%
+        );
+      }
+
+      input[type="range"]::-webkit-slider-thumb {
+        width: 20px;
+        height: 20px;
+        margin-top: -7.5px;
+        appearance: none;
+        border: 3px solid #fff;
+        border-radius: 50%;
+        background: var(--blue);
+        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+      }
+
+      input[type="range"]::-moz-range-track {
+        height: 5px;
+        border-radius: 999px;
+        background: #dbeafe;
+      }
+
+      input[type="range"]::-moz-range-progress {
+        height: 5px;
+        border-radius: 999px;
+        background: var(--blue);
+      }
+
+      input[type="range"]::-moz-range-thumb {
+        width: 15px;
+        height: 15px;
+        border: 3px solid #fff;
+        border-radius: 50%;
+        background: var(--blue);
+        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+      }
+
+      .filter-chip input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .filter-chip span {
+        display: inline-flex;
+        min-height: 34px;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 10px;
+        border: 1px solid #dbeafe;
+        border-radius: 999px;
+        background: #eff6ff;
+        color: #1e40af;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: 160ms ease;
+      }
+
+      .filter-chip input:checked + span {
+        border-color: var(--blue);
+        background: var(--blue);
+        color: #fff;
+        box-shadow: 0 3px 10px rgba(37, 99, 235, 0.22);
+      }
+
+      .filter-chip input:focus-visible + span {
+        outline: 3px solid rgba(37, 99, 235, 0.25);
+        outline-offset: 2px;
+      }
+
+      .room-card {
+        content-visibility: auto;
+        contain-intrinsic-size: 164px;
+        border: 1px solid #e2e8f0;
+        background: #fff;
+        transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+      }
+
+      .room-card:active {
+        transform: scale(0.992);
+      }
+
+      .room-card.is-highlighted {
+        border-color: #60a5fa;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12), 0 12px 30px rgba(15, 23, 42, 0.08);
+      }
+
+      .leaflet-control-attribution {
+        font-size: 9px !important;
+      }
+
+      .leaflet-control-zoom {
+        overflow: hidden;
+        border: 0 !important;
+        border-radius: 12px !important;
+        box-shadow: 0 5px 18px rgba(15, 23, 42, 0.16) !important;
+      }
+
+      .leaflet-control-zoom a {
+        width: 34px !important;
+        height: 34px !important;
+        line-height: 32px !important;
+        color: #1d4ed8 !important;
+      }
+
+      .room-marker {
+        position: relative;
+        width: 32px;
+        height: 40px;
+        filter: drop-shadow(0 5px 5px rgba(15, 23, 42, 0.24));
+      }
+
+      .room-marker__pin {
+        position: absolute;
+        inset: 0 0 8px;
+        display: grid;
+        place-items: center;
+        border: 3px solid #fff;
+        border-radius: 50% 50% 50% 8px;
+        background: var(--blue);
+        color: #fff;
+        transform: rotate(-45deg);
+      }
+
+      .room-marker__pin::after {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #fff;
+      }
+
+      .room-marker--full .room-marker__pin {
+        background: #64748b;
+      }
+
+      .leaflet-popup-content-wrapper {
+        padding: 0;
+        overflow: hidden;
+        border-radius: 16px;
+        box-shadow: 0 18px 45px rgba(15, 23, 42, 0.2);
+      }
+
+      .leaflet-popup-content {
+        width: 230px !important;
+        margin: 0 !important;
+      }
+
+      .popup-card {
+        padding: 14px;
+        font-family: "Inter", sans-serif;
+      }
+
+      .popup-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .map-badge,
+      .map-action {
+        position: absolute;
+        z-index: 500;
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        background: rgba(255, 255, 255, 0.94);
+        box-shadow: 0 7px 20px rgba(15, 23, 42, 0.14);
+        backdrop-filter: blur(10px);
+      }
+
+      .map-badge {
+        top: max(12px, env(safe-area-inset-top));
+        left: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 11px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 800;
+        color: #1e3a8a;
+      }
+
+      .map-action {
+        right: 12px;
+        bottom: 28px;
+        min-height: 36px;
+        padding: 8px 11px;
+        border-radius: 12px;
+        color: #1e40af;
+        font-size: 11px;
+        font-weight: 800;
+      }
+
+      .loading-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 2000;
+        display: grid;
+        place-items: center;
+        background: rgba(248, 250, 252, 0.82);
+        backdrop-filter: blur(8px);
+        transition: opacity 220ms ease, visibility 220ms ease;
+      }
+
+      .loading-overlay.is-hidden {
+        visibility: hidden;
+        opacity: 0;
+      }
+
+      .spinner {
+        width: 28px;
+        height: 28px;
+        border: 3px solid #dbeafe;
+        border-top-color: var(--blue);
+        border-radius: 50%;
+        animation: spin 720ms linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .status-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #16a34a;
+        box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.12);
+      }
+
+      .toast {
+        position: fixed;
+        z-index: 1600;
+        right: 14px;
+        bottom: calc(14px + env(safe-area-inset-bottom));
+        left: 14px;
+        max-width: 480px;
+        margin: 0 auto;
+        padding: 11px 14px;
+        border-radius: 14px;
+        background: #0f172a;
+        color: #fff;
+        font-size: 12px;
+        line-height: 1.5;
+        box-shadow: 0 15px 40px rgba(15, 23, 42, 0.28);
+        transform: translateY(130%);
+        opacity: 0;
+        transition: 200ms ease;
+      }
+
+      .toast.is-visible {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      dialog {
+        width: min(100% - 24px, 500px);
+        max-height: min(82dvh, 760px);
+        margin: auto auto max(12px, env(safe-area-inset-bottom));
+        padding: 0;
+        overflow: hidden;
+        border: 0;
+        border-radius: 24px;
+        background: #fff;
+        box-shadow: 0 24px 70px rgba(15, 23, 42, 0.28);
+      }
+
+      dialog::backdrop {
+        background: rgba(15, 23, 42, 0.54);
+        backdrop-filter: blur(3px);
+      }
+
+      .modal-scroll {
+        max-height: calc(min(82dvh, 760px) - 76px);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+      }
+
+      @media (min-width: 768px) {
+        .list-header {
+          padding: 16px 18px 12px;
+        }
+
+        .scroll-area {
+          padding: 16px 18px 28px;
+        }
+
+        dialog {
+          margin: auto;
+        }
+      }
+
+      @media (min-width: 1024px) {
+        .app-shell {
+          flex-direction: row;
+        }
+
+        .map-pane {
+          flex: 0 0 58%;
+          height: 100%;
+          min-height: 100%;
+        }
+
+        .list-pane {
+          flex: 1 1 42%;
+          height: 100%;
+          margin-top: 0;
+          border-radius: 0;
+          border-left: 1px solid var(--line);
+          box-shadow: -12px 0 32px rgba(15, 23, 42, 0.08);
+        }
+
+        .map-action {
+          bottom: 18px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="app-shell">
+      <section class="map-pane" aria-label="Bản đồ vị trí nhà trọ">
+        <div id="map"></div>
+        <div class="map-badge">
+          <span class="status-dot" aria-hidden="true"></span>
+          Gần Đại học Cần Thơ
+        </div>
+        <button id="fitMapButton" class="map-action" type="button">
+          Xem tất cả trên bản đồ
+        </button>
+      </section>
+
+      <section class="list-pane" aria-label="Danh sách nhà trọ">
+        <header class="list-header">
+          <div class="mb-2.5 flex items-start justify-between gap-3">
+            <div class="min-w-0">
+              <p class="mb-0.5 text-[10px] font-extrabold uppercase tracking-[0.15em] text-blue-600">
+                Tra cứu công khai
+              </p>
+              <h1 class="truncate text-[18px] font-extrabold leading-tight text-slate-900 sm:text-xl">
+                Nhà trọ Sinh viên Cần Thơ
+              </h1>
+            </div>
+            <div class="shrink-0 rounded-full bg-blue-50 px-2.5 py-1.5 text-[11px] font-extrabold text-blue-700">
+              <span id="resultCount">0</span> kết quả
+            </div>
+          </div>
+
+          <label class="search-field flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 transition">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="m21 21-4.35-4.35m2.35-5.15a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            </svg>
+            <span class="sr-only">Tìm kiếm nhà trọ</span>
+            <input
+              id="searchInput"
+              class="min-w-0 flex-1 bg-transparent text-[13px] font-medium text-slate-900 outline-none placeholder:text-slate-400"
+              type="search"
+              autocomplete="off"
+              placeholder="Tìm tên trọ, khu vực hoặc địa chỉ..."
+            />
+            <button id="clearSearchButton" class="hidden rounded-full p-1 text-slate-400" type="button" aria-label="Xóa tìm kiếm">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="m7 7 10 10M17 7 7 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+              </svg>
+            </button>
+          </label>
+
+          <div class="mt-2.5 grid grid-cols-[minmax(130px,1fr)_auto] items-end gap-3">
+            <label class="min-w-0">
+              <span class="mb-0.5 flex items-center justify-between gap-2 text-[10px] font-bold uppercase tracking-wide text-slate-500">
+                Giá tối đa
+                <strong id="priceLabel" class="text-[11px] normal-case tracking-normal text-blue-700">5.000.000 ₫</strong>
+              </span>
+              <input id="priceRange" type="range" min="500000" max="5000000" step="100000" value="5000000" />
+            </label>
+
+            <button id="resetButton" class="mb-0.5 min-h-8 rounded-lg px-2 text-[11px] font-bold text-slate-500 hover:bg-slate-100" type="button">
+              Đặt lại
+            </button>
+          </div>
+
+          <div class="mt-1 flex gap-2 overflow-x-auto pb-0.5" aria-label="Bộ lọc tiện ích">
+            <label class="filter-chip relative">
+              <input id="availableFilter" type="checkbox" />
+              <span>Còn phòng</span>
+            </label>
+            <label class="filter-chip relative">
+              <input id="airFilter" type="checkbox" />
+              <span>Máy lạnh</span>
+            </label>
+            <label class="filter-chip relative">
+              <input id="loftFilter" type="checkbox" />
+              <span>Có gác</span>
+            </label>
+          </div>
+        </header>
+
+        <main id="listScroll" class="scroll-area">
+          <div id="sourceNotice" class="mb-2 hidden rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] font-medium leading-4 text-amber-800"></div>
+          <div id="roomList" class="space-y-2.5" aria-live="polite"></div>
+          <div id="emptyState" class="hidden px-6 py-12 text-center">
+            <div class="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-full bg-blue-50 text-blue-600">
+              <svg width="23" height="23" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M4 10.5 12 4l8 6.5V20H4v-9.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+                <path d="M9.5 20v-5h5v5" stroke="currentColor" stroke-width="1.8" />
+              </svg>
+            </div>
+            <h2 class="text-sm font-extrabold text-slate-800">Chưa tìm thấy nhà trọ phù hợp</h2>
+            <p class="mt-1 text-xs leading-5 text-slate-500">Bạn thử tăng mức giá hoặc bỏ bớt tiện ích.</p>
+            <button id="emptyResetButton" class="mt-4 rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-white" type="button">Xóa bộ lọc</button>
+          </div>
+        </main>
+      </section>
+    </div>
+
+    <div id="loadingOverlay" class="loading-overlay" role="status" aria-live="polite">
+      <div class="rounded-2xl bg-white px-6 py-5 text-center shadow-xl shadow-blue-900/10">
+        <div class="spinner mx-auto"></div>
+        <p class="mt-3 text-xs font-bold text-slate-700">Đang tải dữ liệu...</p>
+      </div>
+    </div>
+
+    <dialog id="detailDialog" aria-labelledby="detailTitle">
+      <div id="detailContent"></div>
+    </dialog>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+
+    <script>
+      // Thay LINK_CUA_TOI bằng URL API JSON hoặc URL CSV đã "Xuất bản lên web" từ Google Sheet.
+      const API_URL = "LINK_CUA_TOI";
+      // Có thể thử nguồn dữ liệu tạm thời bằng ?source=URL_CSV trước khi chèn cố định vào API_URL.
+      const QUERY_API_URL = new URLSearchParams(window.location.search).get("source") || "";
+      const ACTIVE_API_URL = API_URL !== "LINK_CUA_TOI" ? API_URL : QUERY_API_URL;
+
+      const DEFAULT_CENTER = [10.0299, 105.7706];
+      const DEFAULT_ZOOM = 14;
+
+      const DEMO_DATA = [
+        {
+          maTro: "TRO-001",
+          tenTro: "Trọ Sinh viên hẻm 51",
+          trangThai: "Còn phòng",
+          giaTien: 1500000,
+          diaChi: "51/12 đường 3 Tháng 2, phường Ninh Kiều, TP. Cần Thơ",
+          khuVuc: "Phường Ninh Kiều",
+          nguoiQuanLy: "Chú Ba",
+          sdt: "0901234567",
+          mayLanh: true,
+          coGac: true,
+          lat: 10.0299,
+          lng: 105.7706,
+          linkGoogleMaps: "https://maps.google.com/?q=10.0299,105.7706",
+          moTa: "Phòng sạch, gần Đại học Cần Thơ, có chỗ để xe.",
+          ngayCapNhat: "2026-07-18"
+        },
+        {
+          maTro: "TRO-002",
+          tenTro: "Nhà trọ Minh Anh",
+          trangThai: "Còn phòng",
+          giaTien: 1900000,
+          diaChi: "Hẻm 132 đường 3 Tháng 2, phường Ninh Kiều, TP. Cần Thơ",
+          khuVuc: "Phường Ninh Kiều",
+          nguoiQuanLy: "Cô Minh",
+          sdt: "0912345678",
+          mayLanh: true,
+          coGac: false,
+          lat: 10.0324,
+          lng: 105.7684,
+          linkGoogleMaps: "https://maps.google.com/?q=10.0324,105.7684",
+          moTa: "Giờ giấc tự do, khu vực yên tĩnh.",
+          ngayCapNhat: "2026-07-17"
+        },
+        {
+          maTro: "TRO-003",
+          tenTro: "Trọ An Khang",
+          trangThai: "Hết phòng",
+          giaTien: 1200000,
+          diaChi: "Đường Mạc Thiên Tích, phường Ninh Kiều, TP. Cần Thơ",
+          khuVuc: "Phường Ninh Kiều",
+          nguoiQuanLy: "Anh Khang",
+          sdt: "0987654321",
+          mayLanh: false,
+          coGac: true,
+          lat: 10.0274,
+          lng: 105.7738,
+          linkGoogleMaps: "https://maps.google.com/?q=10.0274,105.7738",
+          moTa: "Có gác, phù hợp ở một đến hai người.",
+          ngayCapNhat: "2026-07-15"
+        },
+        {
+          maTro: "TRO-004",
+          tenTro: "Trọ Cô Hồng",
+          trangThai: "Còn phòng",
+          giaTien: 2300000,
+          diaChi: "Đường Trần Hoàng Na, phường Hưng Lợi, TP. Cần Thơ",
+          khuVuc: "Phường Hưng Lợi",
+          nguoiQuanLy: "Cô Hồng",
+          sdt: "0934567890",
+          mayLanh: true,
+          coGac: true,
+          lat: 10.0217,
+          lng: 105.7785,
+          linkGoogleMaps: "https://maps.google.com/?q=10.0217,105.7785",
+          moTa: "Phòng rộng, có máy lạnh và gác, gần chợ.",
+          ngayCapNhat: "2026-07-16"
+        },
+        {
+          maTro: "TRO-005",
+          tenTro: "Khu trọ Sinh viên 24H",
+          trangThai: "Còn phòng",
+          giaTien: 1000000,
+          diaChi: "Đường Nguyễn Văn Cừ nối dài, phường An Bình, TP. Cần Thơ",
+          khuVuc: "Phường An Bình",
+          nguoiQuanLy: "Chú Tư",
+          sdt: "0967890123",
+          mayLanh: false,
+          coGac: false,
+          lat: 10.0357,
+          lng: 105.7589,
+          linkGoogleMaps: "https://maps.google.com/?q=10.0357,105.7589",
+          moTa: "Giá tiết kiệm, có camera an ninh.",
+          ngayCapNhat: "2026-07-14"
+        }
+      ];
+
+      const state = {
+        allRooms: [],
+        filteredRooms: [],
+        map: null,
+        markerLayer: null,
+        markersById: new Map(),
+        filterFrame: null,
+        toastTimer: null,
+        sourceMode: "demo"
+      };
+
+      const elements = {
+        loadingOverlay: document.getElementById("loadingOverlay"),
+        roomList: document.getElementById("roomList"),
+        emptyState: document.getElementById("emptyState"),
+        resultCount: document.getElementById("resultCount"),
+        searchInput: document.getElementById("searchInput"),
+        clearSearchButton: document.getElementById("clearSearchButton"),
+        priceRange: document.getElementById("priceRange"),
+        priceLabel: document.getElementById("priceLabel"),
+        airFilter: document.getElementById("airFilter"),
+        loftFilter: document.getElementById("loftFilter"),
+        availableFilter: document.getElementById("availableFilter"),
+        resetButton: document.getElementById("resetButton"),
+        emptyResetButton: document.getElementById("emptyResetButton"),
+        fitMapButton: document.getElementById("fitMapButton"),
+        sourceNotice: document.getElementById("sourceNotice"),
+        detailDialog: document.getElementById("detailDialog"),
+        detailContent: document.getElementById("detailContent"),
+        toast: document.getElementById("toast"),
+        listScroll: document.getElementById("listScroll")
+      };
+
+      const moneyFormatter = new Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
+        maximumFractionDigits: 0
+      });
+
+      function escapeHTML(value) {
+        return String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function normalizeText(value) {
+        return String(value ?? "")
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/đ/g, "d")
+          .replace(/Đ/g, "D")
+          .toLowerCase()
+          .trim();
+      }
+
+      function parseBoolean(value) {
+        if (typeof value === "boolean") return value;
+        return ["true", "1", "co", "có", "yes", "x"].includes(normalizeText(value));
+      }
+
+      function parseNumber(value) {
+        if (typeof value === "number") return Number.isFinite(value) ? value : 0;
+        const raw = String(value ?? "").trim();
+        if (!raw) return 0;
+        const cleaned = raw.replace(/[^0-9,.-]/g, "");
+        if (/^\d{1,3}(\.\d{3})+$/.test(cleaned)) return Number(cleaned.replaceAll(".", ""));
+        if (/^\d{1,3}(,\d{3})+$/.test(cleaned)) return Number(cleaned.replaceAll(",", ""));
+        return Number(cleaned.replace(",", ".")) || 0;
+      }
+
+      function normalizeStatus(value) {
+        const normalized = normalizeText(value);
+        if (normalized.includes("tam an") || normalized === "an") return "Tạm ẩn";
+        if (normalized.includes("het")) return "Hết phòng";
+        return "Còn phòng";
+      }
+
+      function sanitizePhone(value) {
+        const raw = String(value ?? "").trim();
+        const hasPlus = raw.startsWith("+");
+        const digits = raw.replace(/\D/g, "");
+        return `${hasPlus ? "+" : ""}${digits}`;
+      }
+
+      function isValidUrl(value) {
+        try {
+          const url = new URL(String(value));
+          return url.protocol === "https:" || url.protocol === "http:";
+        } catch {
+          return false;
+        }
+      }
+
+      function hasCoordinates(room) {
+        return Number.isFinite(room.lat) && Number.isFinite(room.lng) &&
+          Math.abs(room.lat) <= 90 && Math.abs(room.lng) <= 180;
+      }
+
+      function normalizeRoom(raw, index) {
+        const room = {
+          id: String(raw.maTro || raw.id || `TRO-${index + 1}`),
+          tenTro: String(raw.tenTro || raw.ten_tro || raw["Tên trọ"] || "Nhà trọ chưa đặt tên").trim(),
+          trangThai: normalizeStatus(raw.trangThai ?? raw.trang_thai ?? raw["Trạng thái"]),
+          giaTien: parseNumber(raw.giaTien ?? raw.gia_tien ?? raw["Giá tiền"]),
+          diaChi: String(raw.diaChi || raw.dia_chi || raw["Địa chỉ"] || "").trim(),
+          khuVuc: String(raw.khuVuc || raw.khu_vuc || raw["Khu vực"] || "").trim(),
+          nguoiQuanLy: String(raw.nguoiQuanLy || raw.nguoi_quan_ly || raw["Người quản lý"] || "Chủ trọ").trim(),
+          sdt: sanitizePhone(raw.sdt ?? raw.soDienThoai ?? raw["Số điện thoại"]),
+          mayLanh: parseBoolean(raw.mayLanh ?? raw.may_lanh ?? raw["Máy lạnh"]),
+          coGac: parseBoolean(raw.coGac ?? raw.co_gac ?? raw["Có gác"]),
+          lat: parseNumber(raw.lat ?? raw.latitude),
+          lng: parseNumber(raw.lng ?? raw.longitude),
+          linkGoogleMaps: String(raw.linkGoogleMaps || raw.link_google_maps || raw["Link Google Maps"] || "").trim(),
+          moTa: String(raw.moTa || raw.mo_ta || raw["Mô tả"] || "").trim(),
+          ngayCapNhat: String(raw.ngayCapNhat || raw.ngay_cap_nhat || raw["Ngày cập nhật"] || "").trim()
+        };
+
+        room.searchText = normalizeText([
+          room.tenTro,
+          room.khuVuc,
+          room.diaChi,
+          room.nguoiQuanLy
+        ].join(" "));
+        return room;
+      }
+
+      function parseCSV(text) {
+        const rows = [];
+        let row = [];
+        let cell = "";
+        let quoted = false;
+
+        for (let index = 0; index < text.length; index += 1) {
+          const char = text[index];
+          const next = text[index + 1];
+
+          if (char === '"' && quoted && next === '"') {
+            cell += '"';
+            index += 1;
+          } else if (char === '"') {
+            quoted = !quoted;
+          } else if (char === "," && !quoted) {
+            row.push(cell.trim());
+            cell = "";
+          } else if ((char === "\n" || char === "\r") && !quoted) {
+            if (char === "\r" && next === "\n") index += 1;
+            row.push(cell.trim());
+            if (row.some((value) => value !== "")) rows.push(row);
+            row = [];
+            cell = "";
+          } else {
+            cell += char;
+          }
+        }
+
+        row.push(cell.trim());
+        if (row.some((value) => value !== "")) rows.push(row);
+        if (rows.length < 2) return [];
+
+        const headers = rows[0].map((header) => header.replace(/^\uFEFF/, "").trim());
+        return rows.slice(1).map((values) =>
+          Object.fromEntries(headers.map((header, index) => [header, values[index] ?? ""]))
+        );
+      }
+
+      function parseGoogleVisualization(text) {
+        const start = text.indexOf("(");
+        const end = text.lastIndexOf(")");
+        if (start < 0 || end <= start) return [];
+        const payload = JSON.parse(text.slice(start + 1, end));
+        const table = payload?.table;
+        if (!Array.isArray(table?.cols) || !Array.isArray(table?.rows)) return [];
+        const headers = table.cols.map((column, index) => column.label || column.id || `cot${index + 1}`);
+        return table.rows.map((row) =>
+          Object.fromEntries(headers.map((header, index) => [header, row.c?.[index]?.v ?? ""]))
+        );
+      }
+
+      async function fetchRoomsOnce() {
+        if (!ACTIVE_API_URL) {
+          await new Promise((resolve) => setTimeout(resolve, 650));
+          elements.sourceNotice.textContent = "Đang hiển thị dữ liệu minh họa. Khi kết nối Google Sheet, nội dung tại đây sẽ tự động lấy từ bảng quản trị.";
+          elements.sourceNotice.classList.remove("hidden");
+          return DEMO_DATA;
+        }
+
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 12000);
+        let response;
+        try {
+          response = await fetch(ACTIVE_API_URL, {
+            cache: "default",
+            signal: controller.signal,
+            headers: { Accept: "application/json, text/csv, text/plain;q=0.9" }
+          });
+        } finally {
+          clearTimeout(timeout);
+        }
+        if (!response.ok) throw new Error(`Không thể tải dữ liệu (${response.status})`);
+
+        const text = await response.text();
+        const contentType = response.headers.get("content-type") || "";
+        if (text.includes("google.visualization.Query.setResponse")) {
+          state.sourceMode = "google-sheet";
+          return parseGoogleVisualization(text);
+        }
+        if (contentType.includes("json") || text.trim().startsWith("[") || text.trim().startsWith("{")) {
+          const parsed = JSON.parse(text);
+          state.sourceMode = "api";
+          if (Array.isArray(parsed)) return parsed;
+          if (Array.isArray(parsed.data)) return parsed.data;
+          if (Array.isArray(parsed.rooms)) return parsed.rooms;
+          throw new Error("API JSON không chứa danh sách nhà trọ");
+        }
+        state.sourceMode = "google-sheet";
+        return parseCSV(text);
+      }
+
+      function createMap() {
+        if (!window.L) {
+          document.getElementById("map").innerHTML = '<div class="grid h-full place-items-center px-8 text-center text-sm font-bold text-slate-600">Không tải được bản đồ. Danh sách nhà trọ vẫn có thể sử dụng.</div>';
+          return;
+        }
+
+        state.map = L.map("map", {
+          zoomControl: false,
+          attributionControl: true,
+          preferCanvas: true
+        }).setView(DEFAULT_CENTER, DEFAULT_ZOOM);
+
+        L.control.zoom({ position: "topright" }).addTo(state.map);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 19,
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(state.map);
+
+        state.markerLayer = L.layerGroup().addTo(state.map);
+        if (state.allRooms.length) createRoomMarkers();
+        state.map.on("popupopen", (event) => {
+          const button = event.popup.getElement()?.querySelector("[data-popup-detail]");
+          if (button) button.addEventListener("click", () => openDetail(button.dataset.popupDetail));
+        });
+
+        const resizeObserver = new ResizeObserver(() => state.map?.invalidateSize({ pan: false }));
+        resizeObserver.observe(document.querySelector(".map-pane"));
+        window.addEventListener("orientationchange", () => setTimeout(() => state.map?.invalidateSize(), 250));
+      }
+
+      function markerIcon(room) {
+        return L.divIcon({
+          className: "",
+          html: `<div class="room-marker ${room.trangThai === "Hết phòng" ? "room-marker--full" : ""}"><div class="room-marker__pin"></div></div>`,
+          iconSize: [32, 40],
+          iconAnchor: [16, 39],
+          popupAnchor: [0, -34]
+        });
+      }
+
+      function popupHTML(room) {
+        const available = room.trangThai === "Còn phòng";
+        return `
+          <article class="popup-card">
+            <div class="mb-1 flex items-start justify-between gap-2">
+              <strong class="text-[13px] leading-5 text-slate-900">${escapeHTML(room.tenTro)}</strong>
+              <span class="shrink-0 rounded-full px-2 py-1 text-[9px] font-extrabold ${available ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-600"}">${escapeHTML(room.trangThai)}</span>
+            </div>
+            <div class="text-sm font-extrabold text-red-600">${moneyFormatter.format(room.giaTien)}<span class="text-[10px] font-medium text-slate-400">/tháng</span></div>
+            <p class="mt-1.5 line-clamp-2 text-[10px] leading-4 text-slate-500">${escapeHTML(room.khuVuc || room.diaChi)}</p>
+            <div class="popup-actions">
+              <button data-popup-detail="${escapeHTML(room.id)}" class="rounded-lg border border-blue-200 px-2 py-2 text-[10px] font-bold text-blue-700" type="button">Chi tiết</button>
+              <a class="rounded-lg bg-blue-600 px-2 py-2 text-center text-[10px] font-bold text-white" href="tel:${escapeHTML(room.sdt)}">Gọi ngay</a>
+            </div>
+          </article>`;
+      }
+
+      function createRoomMarkers() {
+        if (!state.map) return;
+        state.markersById.clear();
+        state.allRooms.forEach((room) => {
+          if (!hasCoordinates(room)) return;
+          const marker = L.marker([room.lat, room.lng], {
+            icon: markerIcon(room),
+            keyboard: true,
+            title: room.tenTro,
+            alt: room.tenTro,
+            riseOnHover: true
+          })
+            .bindPopup(popupHTML(room), { closeButton: true, maxWidth: 250 });
+          state.markersById.set(room.id, marker);
+        });
+      }
+
+      function renderMarkers(rooms) {
+        if (!state.map || !state.markerLayer) return;
+        if (!state.markersById.size && state.allRooms.length) createRoomMarkers();
+        state.markerLayer.clearLayers();
+        rooms.forEach((room) => {
+          const marker = state.markersById.get(room.id);
+          if (marker) state.markerLayer.addLayer(marker);
+        });
+      }
+
+      function utilityBadge(label) {
+        return `<span class="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-[10px] font-bold text-blue-700">${escapeHTML(label)}</span>`;
+      }
+
+      function roomCardHTML(room) {
+        const available = room.trangThai === "Còn phòng";
+        const utilities = [
+          room.mayLanh ? utilityBadge("Máy lạnh") : "",
+          room.coGac ? utilityBadge("Có gác") : ""
+        ].filter(Boolean).join("");
+
+        return `
+          <article class="room-card rounded-2xl p-3.5" data-room-card="${escapeHTML(room.id)}">
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0 flex-1">
+                <div class="mb-1 flex flex-wrap items-center gap-1.5">
+                  <span class="rounded-full px-2 py-1 text-[9px] font-extrabold ${available ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-600"}">${escapeHTML(room.trangThai)}</span>
+                  ${room.ngayCapNhat ? `<span class="text-[9px] font-medium text-slate-400">Cập nhật ${escapeHTML(formatDate(room.ngayCapNhat))}</span>` : ""}
+                </div>
+                <h2 class="truncate text-[15px] font-extrabold text-slate-900">${escapeHTML(room.tenTro)}</h2>
+              </div>
+              <div class="shrink-0 text-right">
+                <div class="text-[15px] font-extrabold leading-5 text-red-600">${moneyFormatter.format(room.giaTien)}</div>
+                <div class="text-[9px] font-medium text-slate-400">mỗi tháng</div>
+              </div>
+            </div>
+
+            <p class="mt-2 line-clamp-2 text-[11px] leading-4 text-slate-500">${escapeHTML(room.khuVuc || room.diaChi || "Chưa cập nhật khu vực")}</p>
+            ${utilities ? `<div class="mt-2 flex flex-wrap gap-1.5">${utilities}</div>` : ""}
+
+            <div class="mt-3 grid grid-cols-[auto_1fr_auto] gap-2">
+              <button class="map-button min-h-10 rounded-xl border border-slate-200 px-3 text-[11px] font-extrabold text-slate-600" data-map-id="${escapeHTML(room.id)}" type="button" aria-label="Xem ${escapeHTML(room.tenTro)} trên bản đồ">Bản đồ</button>
+              <button class="detail-button min-h-10 rounded-xl border border-blue-200 px-3 text-[11px] font-extrabold text-blue-700" data-detail-id="${escapeHTML(room.id)}" type="button">Xem thông tin</button>
+              <a class="inline-flex min-h-10 items-center justify-center rounded-xl bg-blue-600 px-4 text-[11px] font-extrabold text-white shadow-sm shadow-blue-600/20" href="tel:${escapeHTML(room.sdt)}">Gọi chủ trọ</a>
+            </div>
+          </article>`;
+      }
+
+      function renderList(rooms) {
+        elements.roomList.innerHTML = rooms.map(roomCardHTML).join("");
+        elements.emptyState.classList.toggle("hidden", rooms.length > 0);
+        elements.roomList.classList.toggle("hidden", rooms.length === 0);
+        elements.resultCount.textContent = rooms.length.toLocaleString("vi-VN");
+      }
+
+      function applyFilters() {
+        const query = normalizeText(elements.searchInput.value);
+        const maxPrice = Number(elements.priceRange.value);
+        const onlyAir = elements.airFilter.checked;
+        const onlyLoft = elements.loftFilter.checked;
+        const onlyAvailable = elements.availableFilter.checked;
+
+        state.filteredRooms = state.allRooms.filter((room) => {
+          if (room.trangThai === "Tạm ẩn") return false;
+          if (room.giaTien > maxPrice) return false;
+          if (onlyAir && !room.mayLanh) return false;
+          if (onlyLoft && !room.coGac) return false;
+          if (onlyAvailable && room.trangThai !== "Còn phòng") return false;
+          if (query && !room.searchText.includes(query)) return false;
+          return true;
+        });
+
+        renderList(state.filteredRooms);
+        renderMarkers(state.filteredRooms);
+      }
+
+      function scheduleFilters() {
+        if (state.filterFrame) cancelAnimationFrame(state.filterFrame);
+        state.filterFrame = requestAnimationFrame(() => {
+          state.filterFrame = null;
+          applyFilters();
+        });
+      }
+
+      function updatePriceUI() {
+        const value = Number(elements.priceRange.value);
+        const min = Number(elements.priceRange.min);
+        const max = Number(elements.priceRange.max);
+        const progress = ((value - min) / (max - min)) * 100;
+        elements.priceRange.style.setProperty("--range-progress", `${progress}%`);
+        elements.priceLabel.textContent = moneyFormatter.format(value);
+        elements.priceRange.setAttribute("aria-valuetext", `Tối đa ${moneyFormatter.format(value)}`);
+      }
+
+      function resetFilters() {
+        elements.searchInput.value = "";
+        elements.priceRange.value = elements.priceRange.max;
+        elements.airFilter.checked = false;
+        elements.loftFilter.checked = false;
+        elements.availableFilter.checked = false;
+        elements.clearSearchButton.classList.add("hidden");
+        updatePriceUI();
+        applyFilters();
+      }
+
+      function fitVisibleMarkers() {
+        if (!state.map) return;
+        const points = state.filteredRooms
+          .filter(hasCoordinates)
+          .map((room) => [room.lat, room.lng]);
+        if (!points.length) {
+          showToast("Không có tọa độ phù hợp để hiển thị.");
+          return;
+        }
+        if (points.length === 1) state.map.setView(points[0], 16, { animate: true });
+        else state.map.fitBounds(points, { padding: [42, 42], maxZoom: 16, animate: true });
+      }
+
+      function focusRoomOnMap(id) {
+        const room = state.allRooms.find((item) => item.id === id);
+        const marker = state.markersById.get(id);
+        if (!room || !marker || !state.map) {
+          showToast("Nhà trọ này chưa có tọa độ bản đồ.");
+          return;
+        }
+
+        state.map.setView([room.lat, room.lng], Math.max(state.map.getZoom(), 16), { animate: true });
+        marker.openPopup();
+        document.querySelector(`[data-room-card="${CSS.escape(id)}"]`)?.classList.add("is-highlighted");
+        setTimeout(() => document.querySelector(`[data-room-card="${CSS.escape(id)}"]`)?.classList.remove("is-highlighted"), 1600);
+      }
+
+      function formatDate(value) {
+        if (!value) return "";
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return String(value);
+        return new Intl.DateTimeFormat("vi-VN").format(date);
+      }
+
+      function mapsUrl(room) {
+        if (isValidUrl(room.linkGoogleMaps)) return room.linkGoogleMaps;
+        if (hasCoordinates(room)) return `https://www.google.com/maps/search/?api=1&query=${room.lat},${room.lng}`;
+        return "";
+      }
+
+      function openDetail(id) {
+        const room = state.allRooms.find((item) => item.id === id);
+        if (!room) return;
+        const available = room.trangThai === "Còn phòng";
+        const directions = mapsUrl(room);
+
+        elements.detailContent.innerHTML = `
+          <header class="flex items-start justify-between gap-3 border-b border-slate-100 px-5 py-4">
+            <div class="min-w-0">
+              <span class="inline-flex rounded-full px-2 py-1 text-[10px] font-extrabold ${available ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-600"}">${escapeHTML(room.trangThai)}</span>
+              <h2 id="detailTitle" class="mt-1.5 text-lg font-extrabold leading-6 text-slate-900">${escapeHTML(room.tenTro)}</h2>
+            </div>
+            <button data-close-dialog class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-slate-100 text-slate-500" type="button" aria-label="Đóng">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+            </button>
+          </header>
+          <div class="modal-scroll px-5 py-4">
+            <div class="rounded-2xl bg-red-50 px-4 py-3">
+              <p class="text-[10px] font-bold uppercase tracking-wide text-red-500">Giá tham khảo</p>
+              <p class="mt-0.5 text-2xl font-extrabold text-red-600">${moneyFormatter.format(room.giaTien)}<span class="ml-1 text-xs font-medium text-red-400">/tháng</span></p>
+            </div>
+            <dl class="mt-4 space-y-3 text-sm">
+              <div><dt class="text-[10px] font-bold uppercase tracking-wide text-slate-400">Địa chỉ</dt><dd class="mt-1 font-semibold leading-5 text-slate-700">${escapeHTML(room.diaChi || room.khuVuc || "Chưa cập nhật")}</dd></div>
+              <div><dt class="text-[10px] font-bold uppercase tracking-wide text-slate-400">Người quản lý</dt><dd class="mt-1 font-semibold text-slate-700">${escapeHTML(room.nguoiQuanLy)} · ${escapeHTML(room.sdt || "Chưa có số điện thoại")}</dd></div>
+              ${room.moTa ? `<div><dt class="text-[10px] font-bold uppercase tracking-wide text-slate-400">Thông tin thêm</dt><dd class="mt-1 leading-5 text-slate-600">${escapeHTML(room.moTa)}</dd></div>` : ""}
+            </dl>
+            <div class="mt-4 flex flex-wrap gap-2">
+              ${room.mayLanh ? utilityBadge("Có máy lạnh") : utilityBadge("Không máy lạnh")}
+              ${room.coGac ? utilityBadge("Có gác") : utilityBadge("Không gác")}
+            </div>
+            ${room.ngayCapNhat ? `<p class="mt-4 text-[10px] font-medium text-slate-400">Thông tin cập nhật ngày ${escapeHTML(formatDate(room.ngayCapNhat))}</p>` : ""}
+          </div>
+          <footer class="grid grid-cols-2 gap-2 border-t border-slate-100 bg-white px-5 py-4 pb-[max(16px,env(safe-area-inset-bottom))]">
+            ${directions ? `<a class="inline-flex min-h-11 items-center justify-center rounded-xl border border-blue-200 px-3 text-xs font-extrabold text-blue-700" href="${escapeHTML(directions)}" target="_blank" rel="noopener">Chỉ đường</a>` : `<button class="min-h-11 rounded-xl border border-slate-200 px-3 text-xs font-bold text-slate-400" type="button" disabled>Chưa có vị trí</button>`}
+            <a class="inline-flex min-h-11 items-center justify-center rounded-xl bg-blue-600 px-3 text-xs font-extrabold text-white" href="tel:${escapeHTML(room.sdt)}">Gọi chủ trọ</a>
+          </footer>`;
+
+        elements.detailContent.querySelector("[data-close-dialog]").addEventListener("click", () => elements.detailDialog.close());
+        if (typeof elements.detailDialog.showModal === "function") elements.detailDialog.showModal();
+        else elements.detailDialog.setAttribute("open", "");
+      }
+
+      function showToast(message) {
+        clearTimeout(state.toastTimer);
+        elements.toast.textContent = message;
+        elements.toast.classList.add("is-visible");
+        state.toastTimer = setTimeout(() => elements.toast.classList.remove("is-visible"), 2800);
+      }
+
+      function bindEvents() {
+        elements.searchInput.addEventListener("input", () => {
+          elements.clearSearchButton.classList.toggle("hidden", !elements.searchInput.value);
+          scheduleFilters();
+        });
+        elements.clearSearchButton.addEventListener("click", () => {
+          elements.searchInput.value = "";
+          elements.clearSearchButton.classList.add("hidden");
+          elements.searchInput.focus();
+          applyFilters();
+        });
+        elements.priceRange.addEventListener("input", () => {
+          updatePriceUI();
+          scheduleFilters();
+        });
+        [elements.airFilter, elements.loftFilter, elements.availableFilter].forEach((input) => input.addEventListener("change", applyFilters));
+        elements.resetButton.addEventListener("click", resetFilters);
+        elements.emptyResetButton.addEventListener("click", resetFilters);
+        elements.fitMapButton.addEventListener("click", fitVisibleMarkers);
+        elements.roomList.addEventListener("click", (event) => {
+          const mapButton = event.target.closest("[data-map-id]");
+          if (mapButton) {
+            focusRoomOnMap(mapButton.dataset.mapId);
+            return;
+          }
+          const detailButton = event.target.closest("[data-detail-id]");
+          if (detailButton) openDetail(detailButton.dataset.detailId);
+        });
+        elements.detailDialog.addEventListener("click", (event) => {
+          if (event.target === elements.detailDialog) elements.detailDialog.close();
+        });
+      }
+
+      async function init() {
+        updatePriceUI();
+        bindEvents();
+        requestAnimationFrame(createMap);
+
+        try {
+          const rawRooms = await fetchRoomsOnce();
+          state.allRooms = rawRooms
+            .map(normalizeRoom)
+            .filter((room) => room.tenTro && room.giaTien > 0);
+          if (!state.allRooms.length) throw new Error("Nguồn dữ liệu chưa có dòng hợp lệ");
+        } catch (error) {
+          console.error(error);
+          state.allRooms = DEMO_DATA.map(normalizeRoom);
+          elements.sourceNotice.textContent = "Không tải được nguồn dữ liệu thật. Website đang dùng dữ liệu minh họa để bạn vẫn có thể kiểm tra giao diện.";
+          elements.sourceNotice.classList.remove("hidden");
+          showToast("Không tải được dữ liệu thật; đã chuyển sang dữ liệu minh họa.");
+        }
+
+        applyFilters();
+        setTimeout(() => state.map?.invalidateSize(), 120);
+        elements.loadingOverlay.classList.add("is-hidden");
+      }
+
+      init();
+    </script>
+  </body>
+</html>
