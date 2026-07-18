@@ -88,6 +88,16 @@
         z-index: 1;
       }
 
+      /* Lớp che cứng: chỉ để lộ phần bản đồ nằm trong bán kính 20 km. */
+      .radius-mask {
+        position: absolute;
+        inset: 0;
+        z-index: 450;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+
       .list-pane {
         position: relative;
         z-index: 10;
@@ -488,9 +498,13 @@
     <div class="app-shell">
       <section class="map-pane" aria-label="Bản đồ vị trí nhà trọ">
         <div id="map"></div>
+        <svg id="radiusMask" class="radius-mask" aria-hidden="true" preserveAspectRatio="none">
+          <path id="radiusMaskPath" fill="#dbeafe" fill-rule="evenodd"></path>
+          <circle id="radiusOutline" fill="none" stroke="#2563eb" stroke-width="3"></circle>
+        </svg>
         <div class="map-badge">
           <span class="status-dot" aria-hidden="true"></span>
-          Gần Đại học Cần Thơ
+          Chỉ hiển thị bán kính 20 km
         </div>
         <button id="fitMapButton" class="map-action" type="button">
           Xem tất cả trên bản đồ
@@ -602,100 +616,12 @@
     <script>
       // Thay LINK_CUA_TOI bằng URL API JSON hoặc URL CSV đã "Xuất bản lên web" từ Google Sheet.
       const API_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRpfMUJCiPSrbPAFKaCxu0ETXjxy-FhUymIKHlZIgzhSDAb4iAnyZqHh9mF5xcczw/pub?gid=2080272576&single=true&output=csv";
-      // Có thể thử nguồn dữ liệu tạm thời bằng ?source=URL_CSV trước khi chèn cố định vào API_URL.
-      const QUERY_API_URL = new URLSearchParams(window.location.search).get("source") || "";
-      const ACTIVE_API_URL = API_URL !== "LINK_CUA_TOI" ? API_URL : QUERY_API_URL;
+      const ACTIVE_API_URL = API_URL;
+      const UNIVERSITY_CENTER = { lat: 10.0299, lng: 105.7706 };
+      const DEFAULT_CENTER = [UNIVERSITY_CENTER.lat, UNIVERSITY_CENTER.lng];
+      const SEARCH_RADIUS_METERS = 20000;
+      const DEFAULT_ZOOM = 11;
 
-      const DEFAULT_CENTER = [10.0299, 105.7706];
-      const DEFAULT_ZOOM = 14;
-
-      const DEMO_DATA = [
-        {
-          maTro: "TRO-001",
-          tenTro: "Trọ Sinh viên hẻm 51",
-          trangThai: "Còn phòng",
-          giaTien: 1500000,
-          diaChi: "51/12 đường 3 Tháng 2, phường Ninh Kiều, TP. Cần Thơ",
-          khuVuc: "Phường Ninh Kiều",
-          nguoiQuanLy: "Chú Ba",
-          sdt: "0901234567",
-          mayLanh: true,
-          coGac: true,
-          lat: 10.0299,
-          lng: 105.7706,
-          linkGoogleMaps: "https://maps.google.com/?q=10.0299,105.7706",
-          moTa: "Phòng sạch, gần Đại học Cần Thơ, có chỗ để xe.",
-          ngayCapNhat: "2026-07-18"
-        },
-        {
-          maTro: "TRO-002",
-          tenTro: "Nhà trọ Minh Anh",
-          trangThai: "Còn phòng",
-          giaTien: 1900000,
-          diaChi: "Hẻm 132 đường 3 Tháng 2, phường Ninh Kiều, TP. Cần Thơ",
-          khuVuc: "Phường Ninh Kiều",
-          nguoiQuanLy: "Cô Minh",
-          sdt: "0912345678",
-          mayLanh: true,
-          coGac: false,
-          lat: 10.0324,
-          lng: 105.7684,
-          linkGoogleMaps: "https://maps.google.com/?q=10.0324,105.7684",
-          moTa: "Giờ giấc tự do, khu vực yên tĩnh.",
-          ngayCapNhat: "2026-07-17"
-        },
-        {
-          maTro: "TRO-003",
-          tenTro: "Trọ An Khang",
-          trangThai: "Hết phòng",
-          giaTien: 1200000,
-          diaChi: "Đường Mạc Thiên Tích, phường Ninh Kiều, TP. Cần Thơ",
-          khuVuc: "Phường Ninh Kiều",
-          nguoiQuanLy: "Anh Khang",
-          sdt: "0987654321",
-          mayLanh: false,
-          coGac: true,
-          lat: 10.0274,
-          lng: 105.7738,
-          linkGoogleMaps: "https://maps.google.com/?q=10.0274,105.7738",
-          moTa: "Có gác, phù hợp ở một đến hai người.",
-          ngayCapNhat: "2026-07-15"
-        },
-        {
-          maTro: "TRO-004",
-          tenTro: "Trọ Cô Hồng",
-          trangThai: "Còn phòng",
-          giaTien: 2300000,
-          diaChi: "Đường Trần Hoàng Na, phường Hưng Lợi, TP. Cần Thơ",
-          khuVuc: "Phường Hưng Lợi",
-          nguoiQuanLy: "Cô Hồng",
-          sdt: "0934567890",
-          mayLanh: true,
-          coGac: true,
-          lat: 10.0217,
-          lng: 105.7785,
-          linkGoogleMaps: "https://maps.google.com/?q=10.0217,105.7785",
-          moTa: "Phòng rộng, có máy lạnh và gác, gần chợ.",
-          ngayCapNhat: "2026-07-16"
-        },
-        {
-          maTro: "TRO-005",
-          tenTro: "Khu trọ Sinh viên 24H",
-          trangThai: "Còn phòng",
-          giaTien: 1000000,
-          diaChi: "Đường Nguyễn Văn Cừ nối dài, phường An Bình, TP. Cần Thơ",
-          khuVuc: "Phường An Bình",
-          nguoiQuanLy: "Chú Tư",
-          sdt: "0967890123",
-          mayLanh: false,
-          coGac: false,
-          lat: 10.0357,
-          lng: 105.7589,
-          linkGoogleMaps: "https://maps.google.com/?q=10.0357,105.7589",
-          moTa: "Giá tiết kiệm, có camera an ninh.",
-          ngayCapNhat: "2026-07-14"
-        }
-      ];
 
       const state = {
         allRooms: [],
@@ -703,9 +629,10 @@
         map: null,
         markerLayer: null,
         markersById: new Map(),
+        radiusBounds: null,
         filterFrame: null,
         toastTimer: null,
-        sourceMode: "demo"
+        sourceMode: "google-sheet"
       };
 
       const elements = {
@@ -723,6 +650,8 @@
         resetButton: document.getElementById("resetButton"),
         emptyResetButton: document.getElementById("emptyResetButton"),
         fitMapButton: document.getElementById("fitMapButton"),
+        radiusMaskPath: document.getElementById("radiusMaskPath"),
+        radiusOutline: document.getElementById("radiusOutline"),
         sourceNotice: document.getElementById("sourceNotice"),
         detailDialog: document.getElementById("detailDialog"),
         detailContent: document.getElementById("detailContent"),
@@ -770,6 +699,19 @@
         return Number(cleaned.replace(",", ".")) || 0;
       }
 
+      function parseCoordinate(value) {
+        if (value === null || value === undefined || String(value).trim() === "") return Number.NaN;
+        if (typeof value === "number") return Number.isFinite(value) ? value : Number.NaN;
+        const parsed = Number(String(value).trim().replace(",", ".").replace(/[^0-9+.-]/g, ""));
+        return Number.isFinite(parsed) ? parsed : Number.NaN;
+      }
+
+      function parseOptionalWholeNumber(value) {
+        if (value === null || value === undefined || String(value).trim() === "") return null;
+        const parsed = parseNumber(value);
+        return Number.isFinite(parsed) ? Math.max(0, Math.floor(parsed)) : null;
+      }
+
       function normalizeStatus(value) {
         const normalized = normalizeText(value);
         if (normalized.includes("tam an") || normalized === "an") return "Tạm ẩn";
@@ -798,6 +740,22 @@
           Math.abs(room.lat) <= 90 && Math.abs(room.lng) <= 180;
       }
 
+      function distanceFromUniversity(room) {
+        if (!hasCoordinates(room)) return Number.POSITIVE_INFINITY;
+        const toRadians = (degrees) => degrees * Math.PI / 180;
+        const earthRadius = 6371000;
+        const lat1 = toRadians(UNIVERSITY_CENTER.lat);
+        const lat2 = toRadians(room.lat);
+        const deltaLat = lat2 - lat1;
+        const deltaLng = toRadians(room.lng - UNIVERSITY_CENTER.lng);
+        const a = Math.sin(deltaLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(deltaLng / 2) ** 2;
+        return earthRadius * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      }
+
+      function isWithinSearchRadius(room) {
+        return distanceFromUniversity(room) <= SEARCH_RADIUS_METERS;
+      }
+
       function normalizeRoom(raw, index) {
         const room = {
           id: String(raw.maTro || raw.id || `TRO-${index + 1}`),
@@ -810,8 +768,12 @@
           sdt: sanitizePhone(raw.sdt ?? raw.soDienThoai ?? raw["Số điện thoại"]),
           mayLanh: parseBoolean(raw.mayLanh ?? raw.may_lanh ?? raw["Máy lạnh"]),
           coGac: parseBoolean(raw.coGac ?? raw.co_gac ?? raw["Có gác"]),
-          lat: parseNumber(raw.lat ?? raw.latitude),
-          lng: parseNumber(raw.lng ?? raw.longitude),
+          tongSoPhong: parseOptionalWholeNumber(raw.tongSoPhong ?? raw.tong_so_phong ?? raw["Tổng số phòng"]),
+          soPhongTrong: parseOptionalWholeNumber(raw.soPhongTrong ?? raw.so_phong_trong ?? raw["Số phòng trống"] ?? raw["Số phòng còn"]),
+          gioGiac: String(raw.gioGiac || raw.gio_giac || raw["Giờ giấc"] || raw["Quy định giờ giấc"] || "").trim(),
+          soNguoiToiDa: parseOptionalWholeNumber(raw.soNguoiToiDa ?? raw.so_nguoi_toi_da ?? raw["Số người tối đa"] ?? raw["Ở tối đa mấy người"]),
+          lat: parseCoordinate(raw.lat ?? raw.latitude),
+          lng: parseCoordinate(raw.lng ?? raw.longitude),
           linkGoogleMaps: String(raw.linkGoogleMaps || raw.link_google_maps || raw["Link Google Maps"] || "").trim(),
           moTa: String(raw.moTa || raw.mo_ta || raw["Mô tả"] || "").trim(),
           ngayCapNhat: String(raw.ngayCapNhat || raw.ngay_cap_nhat || raw["Ngày cập nhật"] || "").trim()
@@ -821,7 +783,8 @@
           room.tenTro,
           room.khuVuc,
           room.diaChi,
-          room.nguoiQuanLy
+          room.nguoiQuanLy,
+          room.gioGiac
         ].join(" "));
         return room;
       }
@@ -879,19 +842,14 @@
       }
 
       async function fetchRoomsOnce() {
-        if (!ACTIVE_API_URL) {
-          await new Promise((resolve) => setTimeout(resolve, 650));
-          elements.sourceNotice.textContent = "Đang hiển thị dữ liệu minh họa. Khi kết nối Google Sheet, nội dung tại đây sẽ tự động lấy từ bảng quản trị.";
-          elements.sourceNotice.classList.remove("hidden");
-          return DEMO_DATA;
-        }
-
         const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 12000);
+        const timeout = setTimeout(() => controller.abort(), 20000);
         let response;
         try {
-          response = await fetch(ACTIVE_API_URL, {
-            cache: "default",
+          const requestUrl = new URL(ACTIVE_API_URL);
+          requestUrl.searchParams.set("_ts", Date.now().toString());
+          response = await fetch(requestUrl.toString(), {
+            cache: "no-store",
             signal: controller.signal,
             headers: { Accept: "application/json, text/csv, text/plain;q=0.9" }
           });
@@ -918,6 +876,32 @@
         return parseCSV(text);
       }
 
+      function updateRadiusMask() {
+        if (!state.map || !elements.radiusMaskPath || !elements.radiusOutline) return;
+        const size = state.map.getSize();
+        const centerPoint = state.map.latLngToContainerPoint(DEFAULT_CENTER);
+        const longitudeDelta = SEARCH_RADIUS_METERS /
+          (111320 * Math.cos(UNIVERSITY_CENTER.lat * Math.PI / 180));
+        const edgePoint = state.map.latLngToContainerPoint([
+          UNIVERSITY_CENTER.lat,
+          UNIVERSITY_CENTER.lng + longitudeDelta
+        ]);
+        const radius = Math.max(0, Math.abs(edgePoint.x - centerPoint.x));
+        const width = Math.max(1, size.x);
+        const height = Math.max(1, size.y);
+        const x = centerPoint.x;
+        const y = centerPoint.y;
+
+        elements.radiusMaskPath.ownerSVGElement.setAttribute("viewBox", `0 0 ${width} ${height}`);
+        elements.radiusMaskPath.setAttribute(
+          "d",
+          `M0 0H${width}V${height}H0Z M${x - radius} ${y}a${radius} ${radius} 0 1 0 ${radius * 2} 0a${radius} ${radius} 0 1 0 ${-radius * 2} 0`
+        );
+        elements.radiusOutline.setAttribute("cx", x);
+        elements.radiusOutline.setAttribute("cy", y);
+        elements.radiusOutline.setAttribute("r", radius);
+      }
+
       function createMap() {
         if (!window.L) {
           document.getElementById("map").innerHTML = '<div class="grid h-full place-items-center px-8 text-center text-sm font-bold text-slate-600">Không tải được bản đồ. Danh sách nhà trọ vẫn có thể sử dụng.</div>';
@@ -927,25 +911,47 @@
         state.map = L.map("map", {
           zoomControl: false,
           attributionControl: true,
-          preferCanvas: true
+          preferCanvas: true,
+          maxBoundsViscosity: 1,
+          worldCopyJump: false
         }).setView(DEFAULT_CENTER, DEFAULT_ZOOM);
 
+        state.radiusBounds = L.latLng(DEFAULT_CENTER).toBounds(SEARCH_RADIUS_METERS * 2);
+        state.map.setMaxBounds(state.radiusBounds);
         L.control.zoom({ position: "topright" }).addTo(state.map);
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
           maxZoom: 19,
+          bounds: state.radiusBounds,
+          noWrap: true,
+          updateWhenIdle: true,
           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         }).addTo(state.map);
+
+        state.map.fitBounds(state.radiusBounds, { padding: [14, 14], animate: false });
+        state.map.setMinZoom(state.map.getZoom());
+        state.map.setView(DEFAULT_CENTER, state.map.getZoom(), { animate: false });
+        state.map.on("move zoom resize", updateRadiusMask);
+        requestAnimationFrame(updateRadiusMask);
 
         state.markerLayer = L.layerGroup().addTo(state.map);
         if (state.allRooms.length) createRoomMarkers();
         state.map.on("popupopen", (event) => {
           const button = event.popup.getElement()?.querySelector("[data-popup-detail]");
-          if (button) button.addEventListener("click", () => openDetail(button.dataset.popupDetail));
+          if (button) button.onclick = () => openDetail(button.dataset.popupDetail);
         });
 
-        const resizeObserver = new ResizeObserver(() => state.map?.invalidateSize({ pan: false }));
-        resizeObserver.observe(document.querySelector(".map-pane"));
-        window.addEventListener("orientationchange", () => setTimeout(() => state.map?.invalidateSize(), 250));
+        if ("ResizeObserver" in window) {
+          const resizeObserver = new ResizeObserver(() => {
+            state.map?.invalidateSize({ pan: false });
+            requestAnimationFrame(updateRadiusMask);
+          });
+          resizeObserver.observe(document.querySelector(".map-pane"));
+        }
+        window.addEventListener("resize", () => requestAnimationFrame(updateRadiusMask), { passive: true });
+        window.addEventListener("orientationchange", () => setTimeout(() => {
+          state.map?.invalidateSize();
+          updateRadiusMask();
+        }, 250));
       }
 
       function markerIcon(room) {
@@ -960,6 +966,9 @@
 
       function popupHTML(room) {
         const available = room.trangThai === "Còn phòng";
+        const roomCount = room.soPhongTrong !== null
+          ? `Còn ${room.soPhongTrong}${room.tongSoPhong !== null ? `/${room.tongSoPhong}` : ""} phòng`
+          : room.tongSoPhong !== null ? `${room.tongSoPhong} phòng` : "";
         return `
           <article class="popup-card">
             <div class="mb-1 flex items-start justify-between gap-2">
@@ -968,6 +977,8 @@
             </div>
             <div class="text-sm font-extrabold text-red-600">${moneyFormatter.format(room.giaTien)}<span class="text-[10px] font-medium text-slate-400">/tháng</span></div>
             <p class="mt-1.5 line-clamp-2 text-[10px] leading-4 text-slate-500">${escapeHTML(room.khuVuc || room.diaChi)}</p>
+            ${roomCount ? `<p class="mt-1.5 text-[10px] font-bold text-blue-700">${escapeHTML(roomCount)}</p>` : ""}
+            ${room.gioGiac ? `<p class="mt-1 text-[9px] text-slate-500"><strong>Giờ giấc:</strong> ${escapeHTML(room.gioGiac)}</p>` : ""}
             <div class="popup-actions">
               <button data-popup-detail="${escapeHTML(room.id)}" class="rounded-lg border border-blue-200 px-2 py-2 text-[10px] font-bold text-blue-700" type="button">Chi tiết</button>
               <a class="rounded-lg bg-blue-600 px-2 py-2 text-center text-[10px] font-bold text-white" href="tel:${escapeHTML(room.sdt)}">Gọi ngay</a>
@@ -1009,6 +1020,8 @@
       function roomCardHTML(room) {
         const available = room.trangThai === "Còn phòng";
         const utilities = [
+          room.soPhongTrong !== null ? utilityBadge(`Còn ${room.soPhongTrong}${room.tongSoPhong !== null ? `/${room.tongSoPhong}` : ""} phòng`) : "",
+          room.soNguoiToiDa !== null ? utilityBadge(`Tối đa ${room.soNguoiToiDa} người`) : "",
           room.mayLanh ? utilityBadge("Máy lạnh") : "",
           room.coGac ? utilityBadge("Có gác") : ""
         ].filter(Boolean).join("");
@@ -1031,6 +1044,7 @@
 
             <p class="mt-2 line-clamp-2 text-[11px] leading-4 text-slate-500">${escapeHTML(room.khuVuc || room.diaChi || "Chưa cập nhật khu vực")}</p>
             ${utilities ? `<div class="mt-2 flex flex-wrap gap-1.5">${utilities}</div>` : ""}
+            ${room.gioGiac ? `<p class="mt-2 rounded-xl bg-slate-50 px-2.5 py-2 text-[10px] font-medium leading-4 text-slate-600"><strong>Giờ giấc:</strong> ${escapeHTML(room.gioGiac)}</p>` : ""}
 
             <div class="mt-3 grid grid-cols-[auto_1fr_auto] gap-2">
               <button class="map-button min-h-10 rounded-xl border border-slate-200 px-3 text-[11px] font-extrabold text-slate-600" data-map-id="${escapeHTML(room.id)}" type="button" aria-label="Xem ${escapeHTML(room.tenTro)} trên bản đồ">Bản đồ</button>
@@ -1158,6 +1172,12 @@
               <p class="text-[10px] font-bold uppercase tracking-wide text-red-500">Giá tham khảo</p>
               <p class="mt-0.5 text-2xl font-extrabold text-red-600">${moneyFormatter.format(room.giaTien)}<span class="ml-1 text-xs font-medium text-red-400">/tháng</span></p>
             </div>
+            <dl class="mt-3 grid grid-cols-2 gap-2 text-sm">
+              <div class="rounded-xl bg-blue-50 px-3 py-2.5"><dt class="text-[9px] font-bold uppercase text-blue-500">Phòng còn trống</dt><dd class="mt-1 font-extrabold text-blue-800">${room.soPhongTrong !== null ? `${room.soPhongTrong} phòng` : "Chưa cập nhật"}</dd></div>
+              <div class="rounded-xl bg-slate-50 px-3 py-2.5"><dt class="text-[9px] font-bold uppercase text-slate-400">Tổng số phòng</dt><dd class="mt-1 font-extrabold text-slate-700">${room.tongSoPhong !== null ? `${room.tongSoPhong} phòng` : "Chưa cập nhật"}</dd></div>
+              <div class="rounded-xl bg-slate-50 px-3 py-2.5"><dt class="text-[9px] font-bold uppercase text-slate-400">Số người tối đa</dt><dd class="mt-1 font-extrabold text-slate-700">${room.soNguoiToiDa !== null ? `${room.soNguoiToiDa} người/phòng` : "Chưa cập nhật"}</dd></div>
+              <div class="rounded-xl bg-slate-50 px-3 py-2.5"><dt class="text-[9px] font-bold uppercase text-slate-400">Giờ giấc</dt><dd class="mt-1 font-extrabold text-slate-700">${escapeHTML(room.gioGiac || "Chưa cập nhật")}</dd></div>
+            </dl>
             <dl class="mt-4 space-y-3 text-sm">
               <div><dt class="text-[10px] font-bold uppercase tracking-wide text-slate-400">Địa chỉ</dt><dd class="mt-1 font-semibold leading-5 text-slate-700">${escapeHTML(room.diaChi || room.khuVuc || "Chưa cập nhật")}</dd></div>
               <div><dt class="text-[10px] font-bold uppercase tracking-wide text-slate-400">Người quản lý</dt><dd class="mt-1 font-semibold text-slate-700">${escapeHTML(room.nguoiQuanLy)} · ${escapeHTML(room.sdt || "Chưa có số điện thoại")}</dd></div>
@@ -1226,16 +1246,29 @@
 
         try {
           const rawRooms = await fetchRoomsOnce();
-          state.allRooms = rawRooms
+          const normalizedRooms = rawRooms
             .map(normalizeRoom)
             .filter((room) => room.tenTro && room.giaTien > 0);
-          if (!state.allRooms.length) throw new Error("Nguồn dữ liệu chưa có dòng hợp lệ");
+          if (!normalizedRooms.length) throw new Error("Google Sheet chưa có dòng hợp lệ");
+
+          const uniqueRooms = [...new Map(normalizedRooms.map((room) => [room.id, room])).values()];
+          const missingCoordinates = uniqueRooms.filter((room) => !hasCoordinates(room)).length;
+          const outsideRadius = uniqueRooms.filter((room) => hasCoordinates(room) && !isWithinSearchRadius(room)).length;
+          state.allRooms = uniqueRooms.filter((room) => hasCoordinates(room) && isWithinSearchRadius(room));
+
+          const skipped = [];
+          if (missingCoordinates) skipped.push(`${missingCoordinates} dòng thiếu tọa độ`);
+          if (outsideRadius) skipped.push(`${outsideRadius} dòng ngoài bán kính 20 km`);
+          if (skipped.length) {
+            elements.sourceNotice.textContent = `Đã kết nối Google Sheet. Tạm không hiển thị ${skipped.join(", ")}.`;
+            elements.sourceNotice.classList.remove("hidden");
+          }
         } catch (error) {
           console.error(error);
-          state.allRooms = DEMO_DATA.map(normalizeRoom);
-          elements.sourceNotice.textContent = "Không tải được nguồn dữ liệu thật. Website đang dùng dữ liệu minh họa để bạn vẫn có thể kiểm tra giao diện.";
+          state.allRooms = [];
+          elements.sourceNotice.textContent = "Không tải được Google Sheet. Hãy kiểm tra mạng hoặc chế độ Xuất bản lên web.";
           elements.sourceNotice.classList.remove("hidden");
-          showToast("Không tải được dữ liệu thật; đã chuyển sang dữ liệu minh họa.");
+          showToast("Không tải được dữ liệu Google Sheet.");
         }
 
         applyFilters();
