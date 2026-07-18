@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- BẢN MỚI 2026-07-19: Sheet gid=1536601034 · không nút gọi · có định vị, diện tích, ngập và chỗ để xe -->
+<!-- BẢN MOBILE 2026-07-19: cuộn Bản đồ → Bộ lọc → Danh sách · Sheet gid=1536601034 -->
 <html lang="vi">
   <head>
     <meta charset="UTF-8" />
@@ -52,12 +52,24 @@
       html,
       body {
         width: 100%;
-        height: 100%;
+        min-height: 100%;
         margin: 0;
-        overflow: hidden;
+        overflow-x: hidden;
         background: #dbeafe;
         color: var(--ink);
         font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        min-height: 100vh;
+        min-height: 100dvh;
+        overflow-y: auto;
+        overscroll-behavior-y: auto;
+        -webkit-overflow-scrolling: touch;
       }
 
       button,
@@ -73,21 +85,22 @@
 
       .app-shell {
         width: 100%;
-        height: 100vh;
-        height: 100svh;
-        height: 100dvh;
+        min-height: 100vh;
+        min-height: 100dvh;
         display: flex;
         flex-direction: column;
-        overflow: hidden;
+        overflow: visible;
         background: #f8fafc;
       }
 
       .map-pane {
         position: relative;
-        flex: 0 0 44%;
-        min-height: 220px;
+        flex: 0 0 auto;
+        height: clamp(270px, 42svh, 390px);
+        min-height: 270px;
         overflow: hidden;
         background: #dbeafe;
+        scroll-margin-top: 0;
       }
 
       #map {
@@ -109,11 +122,10 @@
       .list-pane {
         position: relative;
         z-index: 10;
-        flex: 1 1 56%;
+        flex: 0 0 auto;
         min-height: 0;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
+        display: block;
+        overflow: visible;
         background: #f8fafc;
         border-radius: 22px 22px 0 0;
         margin-top: -18px;
@@ -121,7 +133,8 @@
       }
 
       .list-header {
-        flex: 0 0 auto;
+        position: relative;
+        z-index: 2;
         padding: 12px 14px 10px;
         background: rgba(255, 255, 255, 0.97);
         border-bottom: 1px solid var(--line);
@@ -129,12 +142,68 @@
       }
 
       .scroll-area {
-        flex: 1 1 auto;
         min-height: 0;
-        overflow-y: auto;
-        overscroll-behavior: contain;
+        overflow: visible;
         padding: 12px 12px calc(22px + env(safe-area-inset-bottom));
         scroll-behavior: smooth;
+      }
+
+      .filter-strip {
+        margin-right: -14px;
+        margin-left: -14px;
+        padding-right: 14px;
+        padding-left: 14px;
+        scrollbar-width: none;
+        scroll-snap-type: x proximity;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .filter-strip::-webkit-scrollbar {
+        display: none;
+      }
+
+      .filter-strip .filter-chip {
+        scroll-snap-align: start;
+      }
+
+      .room-list-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin: 14px 2px 10px;
+      }
+
+      .room-list-heading h2 {
+        margin: 0;
+        color: #0f172a;
+        font-size: 14px;
+        font-weight: 800;
+      }
+
+      .room-list-heading p {
+        margin: 0;
+        color: #64748b;
+        font-size: 10px;
+        font-weight: 600;
+      }
+
+      .load-more-button {
+        display: block;
+        width: 100%;
+        min-height: 44px;
+        margin-top: 12px;
+        border: 1px solid #bfdbfe;
+        border-radius: 14px;
+        background: #fff;
+        color: #1d4ed8;
+        font-size: 12px;
+        font-weight: 800;
+        box-shadow: 0 6px 18px rgba(37, 99, 235, 0.08);
+      }
+
+      .load-more-button[hidden] {
+        display: none;
       }
 
       .scroll-area::-webkit-scrollbar {
@@ -486,6 +555,10 @@
       }
 
       @media (min-width: 768px) {
+        .map-pane {
+          height: clamp(330px, 45svh, 480px);
+        }
+
         .list-header {
           padding: 16px 18px 12px;
         }
@@ -499,9 +572,42 @@
         }
       }
 
+      @media (max-width: 1023px) {
+        #map,
+        .leaflet-container {
+          touch-action: pan-y !important;
+        }
+      }
+
+      @media (max-width: 420px) {
+        .list-header h1 {
+          display: -webkit-box;
+          overflow: hidden;
+          font-size: 16px;
+          white-space: normal;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 2;
+        }
+
+        .map-action {
+          min-height: 40px;
+        }
+      }
+
       @media (min-width: 1024px) {
+        html,
+        body {
+          height: 100%;
+          overflow: hidden;
+        }
+
         .app-shell {
+          height: 100vh;
+          height: 100svh;
+          height: 100dvh;
+          min-height: 0;
           flex-direction: row;
+          overflow: hidden;
         }
 
         .map-pane {
@@ -513,10 +619,25 @@
         .list-pane {
           flex: 1 1 42%;
           height: 100%;
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
           margin-top: 0;
           border-radius: 0;
           border-left: 1px solid var(--line);
           box-shadow: -12px 0 32px rgba(15, 23, 42, 0.08);
+        }
+
+        .list-header {
+          flex: 0 0 auto;
+        }
+
+        .scroll-area {
+          flex: 1 1 auto;
+          min-height: 0;
+          overflow-y: auto;
+          overscroll-behavior: contain;
+          -webkit-overflow-scrolling: touch;
         }
 
         .map-actions {
@@ -608,7 +729,7 @@
             </button>
           </div>
 
-          <div class="mt-1 flex gap-2 overflow-x-auto pb-0.5" aria-label="Bộ lọc tiện ích">
+          <div class="filter-strip mt-1 flex gap-2 overflow-x-auto pb-0.5" aria-label="Bộ lọc tiện ích">
             <label class="filter-chip relative">
               <input id="availableFilter" type="checkbox" />
               <span>Còn phòng</span>
@@ -634,7 +755,12 @@
             <p class="mt-0.5 font-medium">Dữ liệu do Đoàn Thanh niên - Hội Sinh viên Đại học Cần Thơ tổng hợp để tham khảo, không phải hoạt động môi giới. Sinh viên cần trực tiếp kiểm tra phòng và thỏa thuận trước khi đặt cọc.</p>
           </div>
           <div id="sourceNotice" class="mb-2 hidden rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] font-medium leading-4 text-amber-800"></div>
+          <div class="room-list-heading">
+            <h2>Danh sách nhà trọ</h2>
+            <p>Cuộn xuống để xem thêm</p>
+          </div>
           <div id="roomList" class="space-y-2.5" aria-live="polite"></div>
+          <button id="loadMoreButton" class="load-more-button" type="button" hidden>Xem thêm nhà trọ</button>
           <div id="emptyState" class="hidden px-6 py-12 text-center">
             <div class="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-full bg-blue-50 text-blue-600">
               <svg width="23" height="23" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -682,6 +808,7 @@
       const DEFAULT_ZOOM = 11;
       const DATA_CACHE_KEY = "doan-thanh-nien-room-cache-v2";
       const DATA_CACHE_MAX_AGE = 24 * 60 * 60 * 1000;
+      const LIST_BATCH_SIZE = 30;
 
 
       const state = {
@@ -692,6 +819,8 @@
         markersById: new Map(),
         radiusBounds: null,
         userLocationLayer: null,
+        renderedRoomCount: 0,
+        listObserver: null,
         filterFrame: null,
         toastTimer: null,
         sourceMode: "google-sheet"
@@ -700,6 +829,7 @@
       const elements = {
         loadingOverlay: document.getElementById("loadingOverlay"),
         roomList: document.getElementById("roomList"),
+        loadMoreButton: document.getElementById("loadMoreButton"),
         emptyState: document.getElementById("emptyState"),
         resultCount: document.getElementById("resultCount"),
         searchInput: document.getElementById("searchInput"),
@@ -1271,11 +1401,41 @@
           </article>`;
       }
 
-      function renderList(rooms) {
-        elements.roomList.innerHTML = rooms.map(roomCardHTML).join("");
+      function renderList(rooms, reset = true) {
+        if (reset) {
+          state.renderedRoomCount = 0;
+          elements.roomList.innerHTML = "";
+        }
+
+        const start = state.renderedRoomCount;
+        const end = Math.min(start + LIST_BATCH_SIZE, rooms.length);
+        const nextCards = rooms.slice(start, end).map(roomCardHTML).join("");
+        if (nextCards) elements.roomList.insertAdjacentHTML("beforeend", nextCards);
+        state.renderedRoomCount = end;
+
         elements.emptyState.classList.toggle("hidden", rooms.length > 0);
         elements.roomList.classList.toggle("hidden", rooms.length === 0);
         elements.resultCount.textContent = rooms.length.toLocaleString("vi-VN");
+        const remaining = Math.max(0, rooms.length - state.renderedRoomCount);
+        elements.loadMoreButton.hidden = remaining === 0;
+        elements.loadMoreButton.textContent = remaining > 0
+          ? `Xem thêm ${Math.min(LIST_BATCH_SIZE, remaining)} nhà trọ`
+          : "Đã hiển thị tất cả";
+      }
+
+      function renderNextRoomBatch() {
+        if (state.renderedRoomCount >= state.filteredRooms.length) return;
+        renderList(state.filteredRooms, false);
+      }
+
+      function setupProgressiveList() {
+        if (!("IntersectionObserver" in window)) return;
+        state.listObserver = new IntersectionObserver((entries) => {
+          if (entries.some((entry) => entry.isIntersecting) && !elements.loadMoreButton.hidden) {
+            renderNextRoomBatch();
+          }
+        }, { root: null, rootMargin: "500px 0px" });
+        state.listObserver.observe(elements.loadMoreButton);
       }
 
       function applyFilters() {
@@ -1356,8 +1516,23 @@
           state.map.setView([room.lat, room.lng], Math.max(state.map.getZoom(), 16), { animate: true });
           marker.openPopup();
         };
-        if (typeof state.markerLayer.zoomToShowLayer === "function") state.markerLayer.zoomToShowLayer(marker, revealMarker);
-        else revealMarker();
+        const showMarker = () => {
+          state.map.invalidateSize({ pan: false });
+          if (typeof state.markerLayer.zoomToShowLayer === "function") state.markerLayer.zoomToShowLayer(marker, revealMarker);
+          else revealMarker();
+        };
+
+        if (window.matchMedia("(max-width: 1023px)").matches) {
+          const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          document.querySelector(".map-pane")?.scrollIntoView({
+            behavior: reduceMotion ? "auto" : "smooth",
+            block: "start"
+          });
+          setTimeout(showMarker, reduceMotion ? 0 : 320);
+        } else {
+          showMarker();
+        }
+
         const card = [...document.querySelectorAll("[data-room-card]")]
           .find((element) => element.dataset.roomCard === id);
         card?.classList.add("is-highlighted");
@@ -1526,6 +1701,7 @@
           .forEach((input) => input.addEventListener("change", applyFilters));
         elements.resetButton.addEventListener("click", resetFilters);
         elements.emptyResetButton.addEventListener("click", resetFilters);
+        elements.loadMoreButton.addEventListener("click", renderNextRoomBatch);
         elements.fitMapButton.addEventListener("click", fitVisibleMarkers);
         elements.locateButton.addEventListener("click", locateUser);
         elements.roomList.addEventListener("click", (event) => {
@@ -1545,6 +1721,7 @@
       async function init() {
         updatePriceUI();
         bindEvents();
+        setupProgressiveList();
         requestAnimationFrame(createMap);
 
         try {
