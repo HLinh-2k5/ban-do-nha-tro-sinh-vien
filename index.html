@@ -4,15 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#2563eb" />
-    <meta name="codex-preview" content="development" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://*.tile.openstreetmap.org https://unpkg.com; connect-src 'self' https://docs.google.com https://*.googleusercontent.com; object-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests" />
     <meta
       name="description"
-      content="Bản đồ tra cứu nhà trọ sinh viên quanh Đại học Cần Thơ."
+      content="Bản đồ hỗ trợ tra cứu nhà trọ sinh viên trong bán kính 20 km quanh Đại học Cần Thơ, do Đoàn Thanh niên tổng hợp."
     />
-    <title>Bản đồ Nhà trọ Sinh viên Cần Thơ</title>
+    <title>Bản đồ hỗ trợ tra cứu nhà trọ sinh viên</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://unpkg.com" />
+    <link rel="preconnect" href="https://docs.google.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
@@ -23,7 +26,11 @@
       integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
       crossorigin=""
     />
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" integrity="sha384-pmjIAcz2bAn0xukfxADbZIb3t8oRT9Sv0rvO+BR5Csr6Dhqq+nZs59P0pPKQJkEV" crossorigin="" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" integrity="sha384-wgw+aLYNQ7dlhK47ZPK7FRACiq7ROZwgFNg0m04avm4CaXS+Z9Y7nMu8yNjBKYC+" crossorigin="" />
+    <style id="tailwind-build">
+*,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com*/*,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb}:after,:before{--tw-content:""}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.mx-auto{margin-left:auto;margin-right:auto}.mb-0\.5{margin-bottom:.125rem}.mb-1{margin-bottom:.25rem}.mb-2{margin-bottom:.5rem}.mb-2\.5{margin-bottom:.625rem}.mb-3{margin-bottom:.75rem}.ml-1{margin-left:.25rem}.mt-0\.5{margin-top:.125rem}.mt-1{margin-top:.25rem}.mt-1\.5{margin-top:.375rem}.mt-2{margin-top:.5rem}.mt-2\.5{margin-top:.625rem}.mt-3{margin-top:.75rem}.mt-4{margin-top:1rem}.line-clamp-2{overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2}.flex{display:flex}.inline-flex{display:inline-flex}.table{display:table}.grid{display:grid}.hidden{display:none}.h-10{height:2.5rem}.h-12{height:3rem}.h-9{height:2.25rem}.h-full{height:100%}.min-h-10{min-height:2.5rem}.min-h-11{min-height:2.75rem}.min-h-8{min-height:2rem}.w-12{width:3rem}.w-9{width:2.25rem}.min-w-0{min-width:0}.flex-1{flex:1 1 0%}.shrink-0{flex-shrink:0}.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.resize{resize:both}.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-cols-\[minmax\(130px\2c 1fr\)_auto\]{grid-template-columns:minmax(130px,1fr) auto}.flex-wrap{flex-wrap:wrap}.place-items-center{place-items:center}.items-start{align-items:flex-start}.items-end{align-items:flex-end}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1\.5{gap:.375rem}.gap-2{gap:.5rem}.gap-3{gap:.75rem}.space-y-2\.5>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.625rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.625rem*var(--tw-space-y-reverse))}.space-y-3>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.75rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.75rem*var(--tw-space-y-reverse))}.overflow-x-auto{overflow-x:auto}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:.5rem}.rounded-xl{border-radius:.75rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-amber-200{--tw-border-opacity:1;border-color:rgb(253 230 138/var(--tw-border-opacity,1))}.border-blue-200{--tw-border-opacity:1;border-color:rgb(191 219 254/var(--tw-border-opacity,1))}.border-slate-100{--tw-border-opacity:1;border-color:rgb(241 245 249/var(--tw-border-opacity,1))}.border-slate-200{--tw-border-opacity:1;border-color:rgb(226 232 240/var(--tw-border-opacity,1))}.bg-amber-50{--tw-bg-opacity:1;background-color:rgb(255 251 235/var(--tw-bg-opacity,1))}.bg-blue-50{--tw-bg-opacity:1;background-color:rgb(239 246 255/var(--tw-bg-opacity,1))}.bg-blue-600{--tw-bg-opacity:1;background-color:rgb(37 99 235/var(--tw-bg-opacity,1))}.bg-emerald-50{--tw-bg-opacity:1;background-color:rgb(236 253 245/var(--tw-bg-opacity,1))}.bg-red-50{--tw-bg-opacity:1;background-color:rgb(254 242 242/var(--tw-bg-opacity,1))}.bg-slate-100{--tw-bg-opacity:1;background-color:rgb(241 245 249/var(--tw-bg-opacity,1))}.bg-slate-50{--tw-bg-opacity:1;background-color:rgb(248 250 252/var(--tw-bg-opacity,1))}.bg-transparent{background-color:transparent}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.p-1{padding:.25rem}.p-3\.5{padding:.875rem}.px-2{padding-left:.5rem;padding-right:.5rem}.px-2\.5{padding-left:.625rem;padding-right:.625rem}.px-3{padding-left:.75rem;padding-right:.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.px-8{padding-left:2rem;padding-right:2rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}.py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.py-12{padding-top:3rem;padding-bottom:3rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.py-2\.5{padding-top:.625rem;padding-bottom:.625rem}.py-3{padding-top:.75rem;padding-bottom:.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-5{padding-top:1.25rem;padding-bottom:1.25rem}.pb-0\.5{padding-bottom:.125rem}.pb-2{padding-bottom:.5rem}.pb-\[max\(16px\2c env\(safe-area-inset-bottom\)\)\]{padding-bottom:max(16px,env(safe-area-inset-bottom))}.pt-5{padding-top:1.25rem}.text-center{text-align:center}.text-right{text-align:right}.text-2xl{font-size:1.5rem;line-height:2rem}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-\[13px\]{font-size:13px}.text-\[15px\]{font-size:15px}.text-\[18px\]{font-size:18px}.text-\[9px\]{font-size:9px}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-xs{font-size:.75rem;line-height:1rem}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.normal-case{text-transform:none}.leading-4{line-height:1rem}.leading-5{line-height:1.25rem}.leading-6{line-height:1.5rem}.leading-tight{line-height:1.25}.tracking-\[0\.08em\]{letter-spacing:.08em}.tracking-\[0\.15em\]{letter-spacing:.15em}.tracking-normal{letter-spacing:0}.tracking-wide{letter-spacing:.025em}.text-amber-700{--tw-text-opacity:1;color:rgb(180 83 9/var(--tw-text-opacity,1))}.text-amber-800{--tw-text-opacity:1;color:rgb(146 64 14/var(--tw-text-opacity,1))}.text-blue-500{--tw-text-opacity:1;color:rgb(59 130 246/var(--tw-text-opacity,1))}.text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235/var(--tw-text-opacity,1))}.text-blue-700{--tw-text-opacity:1;color:rgb(29 78 216/var(--tw-text-opacity,1))}.text-blue-800{--tw-text-opacity:1;color:rgb(30 64 175/var(--tw-text-opacity,1))}.text-emerald-700{--tw-text-opacity:1;color:rgb(4 120 87/var(--tw-text-opacity,1))}.text-red-400{--tw-text-opacity:1;color:rgb(248 113 113/var(--tw-text-opacity,1))}.text-red-500{--tw-text-opacity:1;color:rgb(239 68 68/var(--tw-text-opacity,1))}.text-red-600{--tw-text-opacity:1;color:rgb(220 38 38/var(--tw-text-opacity,1))}.text-red-700{--tw-text-opacity:1;color:rgb(185 28 28/var(--tw-text-opacity,1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184/var(--tw-text-opacity,1))}.text-slate-500{--tw-text-opacity:1;color:rgb(100 116 139/var(--tw-text-opacity,1))}.text-slate-600{--tw-text-opacity:1;color:rgb(71 85 105/var(--tw-text-opacity,1))}.text-slate-700{--tw-text-opacity:1;color:rgb(51 65 85/var(--tw-text-opacity,1))}.text-slate-800{--tw-text-opacity:1;color:rgb(30 41 59/var(--tw-text-opacity,1))}.text-slate-900{--tw-text-opacity:1;color:rgb(15 23 42/var(--tw-text-opacity,1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.shadow-xl{--tw-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color),0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-blue-900\/10{--tw-shadow-color:rgba(30,58,138,.1);--tw-shadow:var(--tw-shadow-colored)}.outline-none{outline:2px solid transparent;outline-offset:2px}.outline{outline-style:solid}.blur{--tw-blur:blur(8px)}.blur,.drop-shadow{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.drop-shadow{--tw-drop-shadow:drop-shadow(0 1px 2px rgba(0,0,0,.1)) drop-shadow(0 1px 1px rgba(0,0,0,.06))}.filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.backdrop-filter{-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,-webkit-backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter,-webkit-backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.placeholder\:text-slate-400::-moz-placeholder{--tw-text-opacity:1;color:rgb(148 163 184/var(--tw-text-opacity,1))}.placeholder\:text-slate-400::placeholder{--tw-text-opacity:1;color:rgb(148 163 184/var(--tw-text-opacity,1))}.hover\:bg-slate-100:hover{--tw-bg-opacity:1;background-color:rgb(241 245 249/var(--tw-bg-opacity,1))}@media (min-width:640px){.sm\:text-xl{font-size:1.25rem;line-height:1.75rem}}
+    </style>
 
     <style>
       :root {
@@ -316,14 +323,41 @@
 
       .popup-actions {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
         gap: 8px;
         margin-top: 12px;
       }
 
+      .official-notice {
+        border: 1px solid #bfdbfe;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #eff6ff, #ffffff);
+        color: #1e3a8a;
+      }
+
+      .contact-value {
+        user-select: all;
+        -webkit-user-select: all;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .marker-cluster-small,
+      .marker-cluster-medium,
+      .marker-cluster-large {
+        background: rgba(37, 99, 235, 0.2);
+      }
+
+      .marker-cluster-small div,
+      .marker-cluster-medium div,
+      .marker-cluster-large div {
+        background: #2563eb;
+        color: #fff;
+        font-family: "Inter", sans-serif;
+        font-weight: 800;
+      }
+
       .map-badge,
       .map-action {
-        position: absolute;
         z-index: 500;
         border: 1px solid rgba(255, 255, 255, 0.8);
         background: rgba(255, 255, 255, 0.94);
@@ -332,6 +366,7 @@
       }
 
       .map-badge {
+        position: absolute;
         top: max(12px, env(safe-area-inset-top));
         left: 12px;
         display: flex;
@@ -344,9 +379,16 @@
         color: #1e3a8a;
       }
 
-      .map-action {
+      .map-actions {
+        position: absolute;
+        z-index: 500;
         right: 12px;
         bottom: 28px;
+        display: flex;
+        gap: 8px;
+      }
+
+      .map-action {
         min-height: 36px;
         padding: 8px 11px;
         border-radius: 12px;
@@ -476,7 +518,7 @@
           box-shadow: -12px 0 32px rgba(15, 23, 42, 0.08);
         }
 
-        .map-action {
+        .map-actions {
           bottom: 18px;
         }
       }
@@ -504,11 +546,16 @@
         </svg>
         <div class="map-badge">
           <span class="status-dot" aria-hidden="true"></span>
-          Chỉ hiển thị bán kính 20 km
+          Phạm vi phục vụ: 20 km
         </div>
-        <button id="fitMapButton" class="map-action" type="button">
-          Xem tất cả trên bản đồ
-        </button>
+        <div class="map-actions">
+          <button id="locateButton" class="map-action" type="button" aria-label="Định vị vị trí hiện tại của tôi">
+            Vị trí của tôi
+          </button>
+          <button id="fitMapButton" class="map-action" type="button">
+            Xem tất cả
+          </button>
+        </div>
       </section>
 
       <section class="list-pane" aria-label="Danh sách nhà trọ">
@@ -516,10 +563,10 @@
           <div class="mb-2.5 flex items-start justify-between gap-3">
             <div class="min-w-0">
               <p class="mb-0.5 text-[10px] font-extrabold uppercase tracking-[0.15em] text-blue-600">
-                Tra cứu công khai
+                Đoàn Thanh niên · Đồng hành cùng sinh viên
               </p>
               <h1 class="truncate text-[18px] font-extrabold leading-tight text-slate-900 sm:text-xl">
-                Nhà trọ Sinh viên Cần Thơ
+                Bản đồ hỗ trợ tra cứu nhà trọ
               </h1>
             </div>
             <div class="shrink-0 rounded-full bg-blue-50 px-2.5 py-1.5 text-[11px] font-extrabold text-blue-700">
@@ -527,11 +574,11 @@
             </div>
           </div>
 
-          <label class="search-field flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 transition">
+          <label class="sr-only" for="searchInput">Tìm kiếm nhà trọ</label>
+          <div class="search-field flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 transition">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="m21 21-4.35-4.35m2.35-5.15a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
             </svg>
-            <span class="sr-only">Tìm kiếm nhà trọ</span>
             <input
               id="searchInput"
               class="min-w-0 flex-1 bg-transparent text-[13px] font-medium text-slate-900 outline-none placeholder:text-slate-400"
@@ -544,7 +591,7 @@
                 <path d="m7 7 10 10M17 7 7 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
               </svg>
             </button>
-          </label>
+          </div>
 
           <div class="mt-2.5 grid grid-cols-[minmax(130px,1fr)_auto] items-end gap-3">
             <label class="min-w-0">
@@ -573,10 +620,18 @@
               <input id="loftFilter" type="checkbox" />
               <span>Có gác</span>
             </label>
+            <label class="filter-chip relative">
+              <input id="dryFilter" type="checkbox" />
+              <span>Không ghi nhận ngập</span>
+            </label>
           </div>
         </header>
 
         <main id="listScroll" class="scroll-area">
+          <div class="official-notice mb-2.5 px-3 py-2.5 text-[10px] leading-4">
+            <p class="font-extrabold uppercase tracking-[0.08em] text-blue-700">Kênh thông tin hỗ trợ sinh viên</p>
+            <p class="mt-0.5 font-medium">Dữ liệu do Đoàn Thanh niên tổng hợp để tham khảo, không phải hoạt động môi giới. Sinh viên cần trực tiếp kiểm tra phòng và thỏa thuận trước khi đặt cọc.</p>
+          </div>
           <div id="sourceNotice" class="mb-2 hidden rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] font-medium leading-4 text-amber-800"></div>
           <div id="roomList" class="space-y-2.5" aria-live="polite"></div>
           <div id="emptyState" class="hidden px-6 py-12 text-center">
@@ -590,6 +645,9 @@
             <p class="mt-1 text-xs leading-5 text-slate-500">Bạn thử tăng mức giá hoặc bỏ bớt tiện ích.</p>
             <button id="emptyResetButton" class="mt-4 rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-white" type="button">Xóa bộ lọc</button>
           </div>
+          <footer class="px-3 pb-2 pt-5 text-center text-[9px] font-medium leading-4 text-slate-400">
+            Bản đồ hỗ trợ tra cứu nhà trọ sinh viên · Thông tin do Đoàn Thanh niên tổng hợp
+          </footer>
         </main>
       </section>
     </div>
@@ -612,15 +670,17 @@
       integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
       crossorigin=""
     ></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js" integrity="sha384-eXVCORTRlv4FUUgS/xmOyr66XBVraen8ATNLMESp92FKXLAMiKkerixTiBvXriZr" crossorigin=""></script>
 
     <script>
-      // Thay LINK_CUA_TOI bằng URL API JSON hoặc URL CSV đã "Xuất bản lên web" từ Google Sheet.
       const API_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRpfMUJCiPSrbPAFKaCxu0ETXjxy-FhUymIKHlZIgzhSDAb4iAnyZqHh9mF5xcczw/pub?gid=2080272576&single=true&output=csv";
       const ACTIVE_API_URL = API_URL;
       const UNIVERSITY_CENTER = { lat: 10.0299, lng: 105.7706 };
       const DEFAULT_CENTER = [UNIVERSITY_CENTER.lat, UNIVERSITY_CENTER.lng];
       const SEARCH_RADIUS_METERS = 20000;
       const DEFAULT_ZOOM = 11;
+      const DATA_CACHE_KEY = "doan-thanh-nien-room-cache-v1";
+      const DATA_CACHE_MAX_AGE = 24 * 60 * 60 * 1000;
 
 
       const state = {
@@ -630,6 +690,7 @@
         markerLayer: null,
         markersById: new Map(),
         radiusBounds: null,
+        userLocationLayer: null,
         filterFrame: null,
         toastTimer: null,
         sourceMode: "google-sheet"
@@ -646,10 +707,12 @@
         priceLabel: document.getElementById("priceLabel"),
         airFilter: document.getElementById("airFilter"),
         loftFilter: document.getElementById("loftFilter"),
+        dryFilter: document.getElementById("dryFilter"),
         availableFilter: document.getElementById("availableFilter"),
         resetButton: document.getElementById("resetButton"),
         emptyResetButton: document.getElementById("emptyResetButton"),
         fitMapButton: document.getElementById("fitMapButton"),
+        locateButton: document.getElementById("locateButton"),
         radiusMaskPath: document.getElementById("radiusMaskPath"),
         radiusOutline: document.getElementById("radiusOutline"),
         sourceNotice: document.getElementById("sourceNotice"),
@@ -706,6 +769,29 @@
         return Number.isFinite(parsed) ? parsed : Number.NaN;
       }
 
+      function extractCoordinatesFromMapsUrl(value) {
+        const raw = String(value || "").trim();
+        if (!raw) return null;
+        let decoded = raw;
+        try { decoded = decodeURIComponent(raw); } catch {}
+        const patterns = [
+          /@(-?\d{1,2}(?:\.\d+)?),\s*(-?\d{1,3}(?:\.\d+)?)/,
+          /[?&](?:q|query|ll)=(-?\d{1,2}(?:\.\d+)?),\s*(-?\d{1,3}(?:\.\d+)?)/,
+          /!3d(-?\d{1,2}(?:\.\d+))!4d(-?\d{1,3}(?:\.\d+))/,
+          /\/(-?\d{1,2}(?:\.\d+)?),\s*(-?\d{1,3}(?:\.\d+)?)(?:[/?]|$)/
+        ];
+        for (const pattern of patterns) {
+          const match = decoded.match(pattern);
+          if (!match) continue;
+          const lat = Number(match[1]);
+          const lng = Number(match[2]);
+          if (Number.isFinite(lat) && Number.isFinite(lng) && Math.abs(lat) <= 90 && Math.abs(lng) <= 180) {
+            return { lat, lng };
+          }
+        }
+        return null;
+      }
+
       function parseOptionalWholeNumber(value) {
         if (value === null || value === undefined || String(value).trim() === "") return null;
         const parsed = parseNumber(value);
@@ -719,6 +805,15 @@
         return "Còn phòng";
       }
 
+      function normalizeFloodStatus(value) {
+        const normalized = normalizeText(value);
+        if (!normalized || normalized.includes("chua xac minh") || normalized.includes("khong ro")) return "Chưa xác minh";
+        if (normalized.includes("khong") || normalized.includes("chua tung")) return "Không ghi nhận";
+        if (normalized.includes("thuong") || normalized.includes("ngap sau")) return "Thường ngập";
+        if (normalized.includes("co the") || normalized.includes("thinh thoang") || normalized.includes("ngap nhe") || normalized === "co") return "Có thể ngập";
+        return "Chưa xác minh";
+      }
+
       function sanitizePhone(value) {
         const raw = String(value ?? "").trim();
         const hasPlus = raw.startsWith("+");
@@ -726,10 +821,14 @@
         return `${hasPlus ? "+" : ""}${digits}`;
       }
 
-      function isValidUrl(value) {
+      function isSafeMapsUrl(value) {
         try {
           const url = new URL(String(value));
-          return url.protocol === "https:" || url.protocol === "http:";
+          const host = url.hostname.toLowerCase();
+          return url.protocol === "https:" && (
+            host === "google.com" || host.endsWith(".google.com") ||
+            host === "goo.gl" || host.endsWith(".goo.gl")
+          );
         } catch {
           return false;
         }
@@ -757,6 +856,10 @@
       }
 
       function normalizeRoom(raw, index) {
+        const linkGoogleMaps = String(raw.linkGoogleMaps || raw.link_google_maps || raw["Link Google Maps"] || "").trim();
+        const coordinatesFromLink = extractCoordinatesFromMapsUrl(linkGoogleMaps);
+        const rawLat = parseCoordinate(raw.lat ?? raw.latitude);
+        const rawLng = parseCoordinate(raw.lng ?? raw.longitude);
         const room = {
           id: String(raw.maTro || raw.id || `TRO-${index + 1}`),
           tenTro: String(raw.tenTro || raw.ten_tro || raw["Tên trọ"] || "Nhà trọ chưa đặt tên").trim(),
@@ -772,9 +875,11 @@
           soPhongTrong: parseOptionalWholeNumber(raw.soPhongTrong ?? raw.so_phong_trong ?? raw["Số phòng trống"] ?? raw["Số phòng còn"]),
           gioGiac: String(raw.gioGiac || raw.gio_giac || raw["Giờ giấc"] || raw["Quy định giờ giấc"] || "").trim(),
           soNguoiToiDa: parseOptionalWholeNumber(raw.soNguoiToiDa ?? raw.so_nguoi_toi_da ?? raw["Số người tối đa"] ?? raw["Ở tối đa mấy người"]),
-          lat: parseCoordinate(raw.lat ?? raw.latitude),
-          lng: parseCoordinate(raw.lng ?? raw.longitude),
-          linkGoogleMaps: String(raw.linkGoogleMaps || raw.link_google_maps || raw["Link Google Maps"] || "").trim(),
+          ngapKhiMua: normalizeFloodStatus(raw.ngapKhiMua ?? raw.ngap_khi_mua ?? raw["Ngập khi mưa"] ?? raw["Tình trạng ngập"]),
+          ghiChuNgap: String(raw.ghiChuNgap || raw.ghi_chu_ngap || raw["Ghi chú ngập"] || "").trim(),
+          lat: Number.isFinite(rawLat) ? rawLat : (coordinatesFromLink?.lat ?? Number.NaN),
+          lng: Number.isFinite(rawLng) ? rawLng : (coordinatesFromLink?.lng ?? Number.NaN),
+          linkGoogleMaps,
           moTa: String(raw.moTa || raw.mo_ta || raw["Mô tả"] || "").trim(),
           ngayCapNhat: String(raw.ngayCapNhat || raw.ngay_cap_nhat || raw["Ngày cập nhật"] || "").trim()
         };
@@ -784,7 +889,9 @@
           room.khuVuc,
           room.diaChi,
           room.nguoiQuanLy,
-          room.gioGiac
+          room.gioGiac,
+          room.ngapKhiMua,
+          room.ghiChuNgap
         ].join(" "));
         return room;
       }
@@ -876,6 +983,25 @@
         return parseCSV(text);
       }
 
+      function writeRoomCache(rows) {
+        try {
+          if (Array.isArray(rows) && rows.length) {
+            localStorage.setItem(DATA_CACHE_KEY, JSON.stringify({ savedAt: Date.now(), rows }));
+          }
+        } catch {}
+      }
+
+      function readRoomCache() {
+        try {
+          const cached = JSON.parse(localStorage.getItem(DATA_CACHE_KEY) || "null");
+          if (!cached || !Array.isArray(cached.rows) || !cached.rows.length) return null;
+          if (!Number.isFinite(cached.savedAt) || Date.now() - cached.savedAt > DATA_CACHE_MAX_AGE) return null;
+          return cached;
+        } catch {
+          return null;
+        }
+      }
+
       function updateRadiusMask() {
         if (!state.map || !elements.radiusMaskPath || !elements.radiusOutline) return;
         const size = state.map.getSize();
@@ -933,7 +1059,14 @@
         state.map.on("move zoom resize", updateRadiusMask);
         requestAnimationFrame(updateRadiusMask);
 
-        state.markerLayer = L.layerGroup().addTo(state.map);
+        state.markerLayer = typeof L.markerClusterGroup === "function"
+          ? L.markerClusterGroup({
+              showCoverageOnHover: false,
+              spiderfyOnMaxZoom: true,
+              removeOutsideVisibleBounds: true,
+              maxClusterRadius: 48
+            }).addTo(state.map)
+          : L.layerGroup().addTo(state.map);
         if (state.allRooms.length) createRoomMarkers();
         state.map.on("popupopen", (event) => {
           const button = event.popup.getElement()?.querySelector("[data-popup-detail]");
@@ -979,9 +1112,9 @@
             <p class="mt-1.5 line-clamp-2 text-[10px] leading-4 text-slate-500">${escapeHTML(room.khuVuc || room.diaChi)}</p>
             ${roomCount ? `<p class="mt-1.5 text-[10px] font-bold text-blue-700">${escapeHTML(roomCount)}</p>` : ""}
             ${room.gioGiac ? `<p class="mt-1 text-[9px] text-slate-500"><strong>Giờ giấc:</strong> ${escapeHTML(room.gioGiac)}</p>` : ""}
+            <p class="mt-1 text-[9px] text-slate-500"><strong>Ngập khi mưa:</strong> ${escapeHTML(room.ngapKhiMua)}</p>
             <div class="popup-actions">
-              <button data-popup-detail="${escapeHTML(room.id)}" class="rounded-lg border border-blue-200 px-2 py-2 text-[10px] font-bold text-blue-700" type="button">Chi tiết</button>
-              <a class="rounded-lg bg-blue-600 px-2 py-2 text-center text-[10px] font-bold text-white" href="tel:${escapeHTML(room.sdt)}">Gọi ngay</a>
+              <button data-popup-detail="${escapeHTML(room.id)}" class="rounded-lg bg-blue-600 px-2 py-2 text-[10px] font-bold text-white" type="button">Xem thông tin</button>
             </div>
           </article>`;
       }
@@ -1017,13 +1150,32 @@
         return `<span class="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-[10px] font-bold text-blue-700">${escapeHTML(label)}</span>`;
       }
 
+      function floodBadge(room) {
+        const styles = {
+          "Không ghi nhận": "bg-emerald-50 text-emerald-700",
+          "Có thể ngập": "bg-amber-50 text-amber-700",
+          "Thường ngập": "bg-red-50 text-red-700",
+          "Chưa xác minh": "bg-slate-100 text-slate-600"
+        };
+        const labels = {
+          "Không ghi nhận": "Không ghi nhận ngập",
+          "Có thể ngập": "Có thể ngập khi mưa",
+          "Thường ngập": "Thường ngập khi mưa",
+          "Chưa xác minh": "Ngập: chưa xác minh"
+        };
+        const style = styles[room.ngapKhiMua] || styles["Chưa xác minh"];
+        const label = labels[room.ngapKhiMua] || labels["Chưa xác minh"];
+        return `<span class="inline-flex items-center rounded-full px-2 py-1 text-[10px] font-bold ${style}">${escapeHTML(label)}</span>`;
+      }
+
       function roomCardHTML(room) {
         const available = room.trangThai === "Còn phòng";
         const utilities = [
           room.soPhongTrong !== null ? utilityBadge(`Còn ${room.soPhongTrong}${room.tongSoPhong !== null ? `/${room.tongSoPhong}` : ""} phòng`) : "",
           room.soNguoiToiDa !== null ? utilityBadge(`Tối đa ${room.soNguoiToiDa} người`) : "",
           room.mayLanh ? utilityBadge("Máy lạnh") : "",
-          room.coGac ? utilityBadge("Có gác") : ""
+          room.coGac ? utilityBadge("Có gác") : "",
+          floodBadge(room)
         ].filter(Boolean).join("");
 
         return `
@@ -1046,10 +1198,9 @@
             ${utilities ? `<div class="mt-2 flex flex-wrap gap-1.5">${utilities}</div>` : ""}
             ${room.gioGiac ? `<p class="mt-2 rounded-xl bg-slate-50 px-2.5 py-2 text-[10px] font-medium leading-4 text-slate-600"><strong>Giờ giấc:</strong> ${escapeHTML(room.gioGiac)}</p>` : ""}
 
-            <div class="mt-3 grid grid-cols-[auto_1fr_auto] gap-2">
+            <div class="mt-3 grid grid-cols-2 gap-2">
               <button class="map-button min-h-10 rounded-xl border border-slate-200 px-3 text-[11px] font-extrabold text-slate-600" data-map-id="${escapeHTML(room.id)}" type="button" aria-label="Xem ${escapeHTML(room.tenTro)} trên bản đồ">Bản đồ</button>
               <button class="detail-button min-h-10 rounded-xl border border-blue-200 px-3 text-[11px] font-extrabold text-blue-700" data-detail-id="${escapeHTML(room.id)}" type="button">Xem thông tin</button>
-              <a class="inline-flex min-h-10 items-center justify-center rounded-xl bg-blue-600 px-4 text-[11px] font-extrabold text-white shadow-sm shadow-blue-600/20" href="tel:${escapeHTML(room.sdt)}">Gọi chủ trọ</a>
             </div>
           </article>`;
       }
@@ -1066,6 +1217,7 @@
         const maxPrice = Number(elements.priceRange.value);
         const onlyAir = elements.airFilter.checked;
         const onlyLoft = elements.loftFilter.checked;
+        const onlyDry = elements.dryFilter.checked;
         const onlyAvailable = elements.availableFilter.checked;
 
         state.filteredRooms = state.allRooms.filter((room) => {
@@ -1073,6 +1225,7 @@
           if (room.giaTien > maxPrice) return false;
           if (onlyAir && !room.mayLanh) return false;
           if (onlyLoft && !room.coGac) return false;
+          if (onlyDry && room.ngapKhiMua !== "Không ghi nhận") return false;
           if (onlyAvailable && room.trangThai !== "Còn phòng") return false;
           if (query && !room.searchText.includes(query)) return false;
           return true;
@@ -1105,6 +1258,7 @@
         elements.priceRange.value = elements.priceRange.max;
         elements.airFilter.checked = false;
         elements.loftFilter.checked = false;
+        elements.dryFilter.checked = false;
         elements.availableFilter.checked = false;
         elements.clearSearchButton.classList.add("hidden");
         updatePriceUI();
@@ -1132,10 +1286,73 @@
           return;
         }
 
-        state.map.setView([room.lat, room.lng], Math.max(state.map.getZoom(), 16), { animate: true });
-        marker.openPopup();
-        document.querySelector(`[data-room-card="${CSS.escape(id)}"]`)?.classList.add("is-highlighted");
-        setTimeout(() => document.querySelector(`[data-room-card="${CSS.escape(id)}"]`)?.classList.remove("is-highlighted"), 1600);
+        const revealMarker = () => {
+          state.map.setView([room.lat, room.lng], Math.max(state.map.getZoom(), 16), { animate: true });
+          marker.openPopup();
+        };
+        if (typeof state.markerLayer.zoomToShowLayer === "function") state.markerLayer.zoomToShowLayer(marker, revealMarker);
+        else revealMarker();
+        const card = [...document.querySelectorAll("[data-room-card]")]
+          .find((element) => element.dataset.roomCard === id);
+        card?.classList.add("is-highlighted");
+        setTimeout(() => card?.classList.remove("is-highlighted"), 1600);
+      }
+
+      function locateUser() {
+        if (!state.map || !navigator.geolocation) {
+          showToast("Thiết bị hoặc trình duyệt chưa hỗ trợ định vị.");
+          return;
+        }
+
+        const originalLabel = elements.locateButton.textContent;
+        elements.locateButton.disabled = true;
+        elements.locateButton.textContent = "Đang định vị…";
+
+        const finish = () => {
+          elements.locateButton.disabled = false;
+          elements.locateButton.textContent = originalLabel;
+        };
+
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            finish();
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            if (!isWithinSearchRadius({ lat, lng })) {
+              showToast("Vị trí của bạn đang ngoài phạm vi 20 km quanh Đại học Cần Thơ.");
+              return;
+            }
+
+            state.userLocationLayer?.remove();
+            const accuracy = Math.max(10, Math.min(position.coords.accuracy || 30, 1000));
+            state.userLocationLayer = L.layerGroup([
+              L.circle([lat, lng], {
+                radius: accuracy,
+                color: "#2563eb",
+                weight: 1,
+                fillColor: "#60a5fa",
+                fillOpacity: 0.12,
+                interactive: false
+              }),
+              L.circleMarker([lat, lng], {
+                radius: 7,
+                color: "#ffffff",
+                weight: 3,
+                fillColor: "#2563eb",
+                fillOpacity: 1
+              }).bindTooltip("Vị trí của bạn", { direction: "top", offset: [0, -8] })
+            ]).addTo(state.map);
+            state.map.setView([lat, lng], Math.max(state.map.getZoom(), 15), { animate: true });
+          },
+          (error) => {
+            finish();
+            const message = error.code === 1
+              ? "Bạn chưa cho phép truy cập vị trí. Hãy bật quyền định vị cho trình duyệt."
+              : "Chưa xác định được vị trí. Vui lòng thử lại ở nơi có tín hiệu tốt hơn.";
+            showToast(message);
+          },
+          { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 }
+        );
       }
 
       function formatDate(value) {
@@ -1146,7 +1363,7 @@
       }
 
       function mapsUrl(room) {
-        if (isValidUrl(room.linkGoogleMaps)) return room.linkGoogleMaps;
+        if (isSafeMapsUrl(room.linkGoogleMaps)) return room.linkGoogleMaps;
         if (hasCoordinates(room)) return `https://www.google.com/maps/search/?api=1&query=${room.lat},${room.lng}`;
         return "";
       }
@@ -1178,9 +1395,16 @@
               <div class="rounded-xl bg-slate-50 px-3 py-2.5"><dt class="text-[9px] font-bold uppercase text-slate-400">Số người tối đa</dt><dd class="mt-1 font-extrabold text-slate-700">${room.soNguoiToiDa !== null ? `${room.soNguoiToiDa} người/phòng` : "Chưa cập nhật"}</dd></div>
               <div class="rounded-xl bg-slate-50 px-3 py-2.5"><dt class="text-[9px] font-bold uppercase text-slate-400">Giờ giấc</dt><dd class="mt-1 font-extrabold text-slate-700">${escapeHTML(room.gioGiac || "Chưa cập nhật")}</dd></div>
             </dl>
+            <dl class="mt-2 text-sm">
+              <div class="rounded-xl border border-slate-100 bg-slate-50 px-3 py-2.5">
+                <dt class="text-[9px] font-bold uppercase tracking-wide text-slate-400">Tình trạng ngập khi mưa</dt>
+                <dd class="mt-1 font-extrabold text-slate-700">${escapeHTML(room.ngapKhiMua)}</dd>
+                ${room.ghiChuNgap ? `<dd class="mt-1 text-[11px] leading-4 text-slate-500">${escapeHTML(room.ghiChuNgap)}</dd>` : ""}
+              </div>
+            </dl>
             <dl class="mt-4 space-y-3 text-sm">
               <div><dt class="text-[10px] font-bold uppercase tracking-wide text-slate-400">Địa chỉ</dt><dd class="mt-1 font-semibold leading-5 text-slate-700">${escapeHTML(room.diaChi || room.khuVuc || "Chưa cập nhật")}</dd></div>
-              <div><dt class="text-[10px] font-bold uppercase tracking-wide text-slate-400">Người quản lý</dt><dd class="mt-1 font-semibold text-slate-700">${escapeHTML(room.nguoiQuanLy)} · ${escapeHTML(room.sdt || "Chưa có số điện thoại")}</dd></div>
+              <div><dt class="text-[10px] font-bold uppercase tracking-wide text-slate-400">Thông tin liên hệ</dt><dd class="mt-1 font-semibold text-slate-700">${escapeHTML(room.nguoiQuanLy)}</dd><dd class="contact-value mt-0.5 text-slate-600">${escapeHTML(room.sdt || "Chưa có số điện thoại")}</dd></div>
               ${room.moTa ? `<div><dt class="text-[10px] font-bold uppercase tracking-wide text-slate-400">Thông tin thêm</dt><dd class="mt-1 leading-5 text-slate-600">${escapeHTML(room.moTa)}</dd></div>` : ""}
             </dl>
             <div class="mt-4 flex flex-wrap gap-2">
@@ -1189,14 +1413,18 @@
             </div>
             ${room.ngayCapNhat ? `<p class="mt-4 text-[10px] font-medium text-slate-400">Thông tin cập nhật ngày ${escapeHTML(formatDate(room.ngayCapNhat))}</p>` : ""}
           </div>
-          <footer class="grid grid-cols-2 gap-2 border-t border-slate-100 bg-white px-5 py-4 pb-[max(16px,env(safe-area-inset-bottom))]">
-            ${directions ? `<a class="inline-flex min-h-11 items-center justify-center rounded-xl border border-blue-200 px-3 text-xs font-extrabold text-blue-700" href="${escapeHTML(directions)}" target="_blank" rel="noopener">Chỉ đường</a>` : `<button class="min-h-11 rounded-xl border border-slate-200 px-3 text-xs font-bold text-slate-400" type="button" disabled>Chưa có vị trí</button>`}
-            <a class="inline-flex min-h-11 items-center justify-center rounded-xl bg-blue-600 px-3 text-xs font-extrabold text-white" href="tel:${escapeHTML(room.sdt)}">Gọi chủ trọ</a>
+          <footer class="grid grid-cols-1 gap-2 border-t border-slate-100 bg-white px-5 py-4 pb-[max(16px,env(safe-area-inset-bottom))]">
+            ${directions ? `<a class="inline-flex min-h-11 items-center justify-center rounded-xl border border-blue-200 px-3 text-xs font-extrabold text-blue-700" href="${escapeHTML(directions)}" target="_blank" rel="noopener noreferrer">Chỉ đường</a>` : `<button class="min-h-11 rounded-xl border border-slate-200 px-3 text-xs font-bold text-slate-400" type="button" disabled>Chưa có vị trí</button>`}
           </footer>`;
 
-        elements.detailContent.querySelector("[data-close-dialog]").addEventListener("click", () => elements.detailDialog.close());
+        elements.detailContent.querySelector("[data-close-dialog]").addEventListener("click", closeDetail);
         if (typeof elements.detailDialog.showModal === "function") elements.detailDialog.showModal();
         else elements.detailDialog.setAttribute("open", "");
+      }
+
+      function closeDetail() {
+        if (typeof elements.detailDialog.close === "function") elements.detailDialog.close();
+        else elements.detailDialog.removeAttribute("open");
       }
 
       function showToast(message) {
@@ -1221,10 +1449,11 @@
           updatePriceUI();
           scheduleFilters();
         });
-        [elements.airFilter, elements.loftFilter, elements.availableFilter].forEach((input) => input.addEventListener("change", applyFilters));
+        [elements.airFilter, elements.loftFilter, elements.dryFilter, elements.availableFilter].forEach((input) => input.addEventListener("change", applyFilters));
         elements.resetButton.addEventListener("click", resetFilters);
         elements.emptyResetButton.addEventListener("click", resetFilters);
         elements.fitMapButton.addEventListener("click", fitVisibleMarkers);
+        elements.locateButton.addEventListener("click", locateUser);
         elements.roomList.addEventListener("click", (event) => {
           const mapButton = event.target.closest("[data-map-id]");
           if (mapButton) {
@@ -1235,7 +1464,7 @@
           if (detailButton) openDetail(detailButton.dataset.detailId);
         });
         elements.detailDialog.addEventListener("click", (event) => {
-          if (event.target === elements.detailDialog) elements.detailDialog.close();
+          if (event.target === elements.detailDialog) closeDetail();
         });
       }
 
@@ -1245,7 +1474,20 @@
         requestAnimationFrame(createMap);
 
         try {
-          const rawRooms = await fetchRoomsOnce();
+          let rawRooms;
+          let usingCache = false;
+          try {
+            rawRooms = await fetchRoomsOnce();
+            writeRoomCache(rawRooms);
+          } catch (fetchError) {
+            const cached = readRoomCache();
+            if (!cached) throw fetchError;
+            rawRooms = cached.rows;
+            usingCache = true;
+            elements.sourceNotice.textContent = "Google Sheet đang tạm gián đoạn. Website đang dùng bản dữ liệu gần nhất trong vòng 24 giờ.";
+            elements.sourceNotice.classList.remove("hidden");
+          }
+
           const normalizedRooms = rawRooms
             .map(normalizeRoom)
             .filter((room) => room.tenTro && room.giaTien > 0);
@@ -1255,12 +1497,16 @@
           const missingCoordinates = uniqueRooms.filter((room) => !hasCoordinates(room)).length;
           const outsideRadius = uniqueRooms.filter((room) => hasCoordinates(room) && !isWithinSearchRadius(room)).length;
           state.allRooms = uniqueRooms.filter((room) => hasCoordinates(room) && isWithinSearchRadius(room));
+          const unverifiedFlood = state.allRooms.filter((room) => room.ngapKhiMua === "Chưa xác minh").length;
 
           const skipped = [];
           if (missingCoordinates) skipped.push(`${missingCoordinates} dòng thiếu tọa độ`);
           if (outsideRadius) skipped.push(`${outsideRadius} dòng ngoài bán kính 20 km`);
-          if (skipped.length) {
-            elements.sourceNotice.textContent = `Đã kết nối Google Sheet. Tạm không hiển thị ${skipped.join(", ")}.`;
+          if ((skipped.length || unverifiedFlood) && !usingCache) {
+            const messages = [];
+            if (skipped.length) messages.push(`Tạm không hiển thị ${skipped.join(", ")}.`);
+            if (unverifiedFlood) messages.push(`${unverifiedFlood} nhà trọ chưa xác minh tình trạng ngập.`);
+            elements.sourceNotice.textContent = `Đã kết nối Google Sheet. ${messages.join(" ")}`;
             elements.sourceNotice.classList.remove("hidden");
           }
         } catch (error) {
